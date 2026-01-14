@@ -1,0 +1,17 @@
+# OMI Global Productions - Python Dependencies
+
+# FastAPI framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# Template engine
+jinja2==3.1.5
+
+# PostgreSQL driver (no ORM)
+psycopg2-binary==2.9.10
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Development dependencies
+httpx==0.28.1

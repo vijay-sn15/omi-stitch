@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OMI - Project Submission Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary-gold: #B4941E;
+            --bg-dark: #0a0c0b;
+        }
+        @layer base {
+            body {
+                @apply font-display bg-[var(--bg-dark)] text-white selection:bg-[#B4941E]/30;
+            }
+            input[type="text"], input[type="url"], input[type="number"], textarea, select {
+                @apply bg-white/5 border-white/10 rounded-lg focus:ring-[var(--primary-gold)] focus:border-[var(--primary-gold)] text-white placeholder-white/30 transition-all;
+            }
+            label {
+                @apply block text-sm font-semibold text-[var(--primary-gold)] uppercase tracking-widest mb-2;
+            }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gold-glow:hover {
+            box-shadow: 0 0 20px rgba(180, 148, 30, 0.3);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#B4941E",
+                        "omi-gold": "#B4941E",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="min-h-screen relative">
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-black/60 z-10"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 z-10"></div>
+<img alt="Cinematic landscape texture" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD78g18YUds2CVfnikczZMZArfN_f4TCaEb7CeNiw5tcRxZ7U8TP5Cdhg3M6AY61mMM4SEljMGmhnFfgquPcaIfQoN2a2Pp05lYqJzKusJAZsR__1wNEYigssW55jd2melH6XDTVPAiae6STNBkN3DkJLP4iltJt-0GnYY4BLpAA86ICuDfcZDChznw3H8__mICmTSfNGr-sAGZf0-XUwKZa0jhcY3e3pPbgxEIm4h0kcumiutNzRr9L1JZMHT-ta-_u7LcpQZFl4M"/>
+</div>
+<header class="relative z-50 flex items-center justify-between px-10 py-6 border-b border-white/10 bg-black/20 backdrop-blur-md">
+<div class="flex items-center gap-3">
+<div class="text-omi-gold">
+<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"></path>
+</svg>
+</div>
+<h2 class="text-white text-2xl font-extrabold tracking-tighter">OMI</h2>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-white/60 hover:text-omi-gold transition-colors text-xs font-bold uppercase tracking-widest" href="#">Dashboard</a>
+<a class="text-white/60 hover:text-omi-gold transition-colors text-xs font-bold uppercase tracking-widest" href="#">Guidelines</a>
+<a class="text-white/60 hover:text-omi-gold transition-colors text-xs font-bold uppercase tracking-widest" href="#">Support</a>
+</nav>
+<button class="text-white/60 hover:text-white transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</header>
+<main class="relative z-20 max-w-6xl mx-auto px-6 py-16">
+<div class="mb-12 text-center md:text-left">
+<h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">Project Submission</h1>
+<p class="text-white/60 text-lg max-w-2xl">Share your cinematic vision with OMI. We are looking for stories that inspire, heal, and connect humanity with the big picture.</p>
+<div class="h-1 w-20 bg-omi-gold mt-8"></div>
+</div>
+<form class="space-y-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="space-y-8">
+<section class="glass-panel p-8 rounded-2xl">
+<h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-omi-gold">auto_stories</span>
+                            Core Narrative
+                        </h3>
+<div class="space-y-6">
+<div>
+<label for="title">Project Title</label>
+<input class="w-full" id="title" placeholder="The name of your vision" type="text"/>
+</div>
+<div>
+<label for="logline">Logline</label>
+<textarea class="w-full" id="logline" placeholder="One-sentence hook..." rows="2"></textarea>
+</div>
+<div>
+<label for="synopsis">Synopsis</label>
+<textarea class="w-full" id="synopsis" placeholder="Detailed story summary..." rows="4"></textarea>
+</div>
+<div>
+<label for="treatment">Treatment URL</label>
+<input class="w-full" id="treatment" placeholder="Link to full treatment (PDF/Cloud)" type="url"/>
+</div>
+</div>
+</section>
+<section class="glass-panel p-8 rounded-2xl">
+<h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-omi-gold">palette</span>
+                            Visuals &amp; Audio
+                        </h3>
+<div class="space-y-6">
+<div>
+<label for="moodboard">Moodboard URL</label>
+<input class="w-full" id="moodboard" placeholder="Pinterest, Behance, or PDF link" type="url"/>
+</div>
+<div>
+<label for="soundtracks">Soundtrack Inspiration</label>
+<textarea class="w-full" id="soundtracks" placeholder="Spotify playlist or descriptive audio style..." rows="2"></textarea>
+</div>
+</div>
+</section>
+</div>
+<div class="space-y-8">
+<section class="glass-panel p-8 rounded-2xl">
+<h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-omi-gold">person_pin_circle</span>
+                            Talent &amp; Logistics
+                        </h3>
+<div class="space-y-6">
+<div>
+<label for="writer-bio">Writer Bio</label>
+<textarea class="w-full" id="writer-bio" placeholder="Your journey as a storyteller..." rows="3"></textarea>
+</div>
+<div>
+<label>Actor Recommendations (6 Slots)</label>
+<div class="grid grid-cols-2 gap-3">
+<input class="w-full text-xs" placeholder="Actor 1" type="text"/>
+<input class="w-full text-xs" placeholder="Actor 2" type="text"/>
+<input class="w-full text-xs" placeholder="Actor 3" type="text"/>
+<input class="w-full text-xs" placeholder="Actor 4" type="text"/>
+<input class="w-full text-xs" placeholder="Actor 5" type="text"/>
+<input class="w-full text-xs" placeholder="Actor 6" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div>
+<label for="budget">Estimated Budget ($)</label>
+<input class="w-full" id="budget" placeholder="0.00" type="number"/>
+</div>
+<div>
+<label for="languages">Primary Languages</label>
+<input class="w-full" id="languages" placeholder="English, French, etc." type="text"/>
+</div>
+</div>
+</div>
+</section>
+<section class="glass-panel p-8 rounded-2xl">
+<h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-omi-gold">history_edu</span>
+                            Credentials
+                        </h3>
+<div class="space-y-6">
+<div>
+<label for="previous-works">Link to Previous Works</label>
+<textarea class="w-full" id="previous-works" placeholder="Showreel or portfolio links..." rows="2"></textarea>
+</div>
+<div class="pt-4 border-t border-white/10">
+<label class="flex items-start gap-3 cursor-pointer group normal-case tracking-normal">
+<input class="mt-1 rounded border-white/20 text-omi-gold focus:ring-omi-gold bg-transparent" type="checkbox"/>
+<span class="text-xs text-white/50 group-hover:text-white/80 transition-colors">
+                                        I agree to the OMI Terms &amp; Conditions. I confirm that this vision is my original work and aligns with the mission of global healing and sustainability.
+                                    </span>
+</label>
+</div>
+</div>
+</section>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-8 pt-8 border-t border-white/10">
+<div class="flex items-center gap-4 text-white/40">
+<span class="material-symbols-outlined">verified_user</span>
+<p class="text-sm">Your data is encrypted and protected.</p>
+</div>
+<button class="w-full md:w-auto flex items-center justify-center gap-3 bg-omi-gold text-black px-12 py-5 rounded-xl font-bold text-lg hover:scale-105 transition-all gold-glow" type="submit">
+<span>Submit Project</span>
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</form>
+</main>
+<footer class="relative z-20 border-t border-white/10 py-12 bg-black/40">
+<div class="max-w-6xl mx-auto px-6 text-center">
+<div class="flex items-center justify-center gap-3 mb-6">
+<div class="text-omi-gold">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 48 48">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"></path>
+</svg>
+</div>
+<span class="font-extrabold text-xl tracking-tighter">OMI</span>
+</div>
+<p class="text-white/40 text-sm">© 2024 OMI Creative Hub. All rights reserved.</p>
+</div>
+</footer>
+
+</body></html>

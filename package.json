@@ -1,0 +1,20 @@
+{
+  "name": "omi-stitch",
+  "version": "1.0.0",
+  "description": "OMI Global Productions - A creative hub dedicated to storytelling, wellness, and sustainability",
+  "main": "index.js",
+  "scripts": {
+    "css:build": "tailwindcss -i ./app/static/css/input.css -o ./app/static/css/output.css --minify",
+    "css:watch": "tailwindcss -i ./app/static/css/input.css -o ./app/static/css/output.css --watch",
+    "dev": "npm run css:watch"
+  },
+  "keywords": ["omi", "fastapi", "tailwindcss", "landing-page"],
+  "author": "OMI Global Productions",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "tailwindcss": "^3.4.19"
+  }
+}
