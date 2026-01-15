@@ -80,6 +80,8 @@ coverage.xml
 *.png
 !app/static/images/*.png
 !app/static/images/*.jpg
+!app/static/favicon.png
+!app/static/apple-touch-icon.png
 
 # Temporary files
 tmp/
