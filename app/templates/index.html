@@ -2005,10 +2005,23 @@
             }
         });
 
-        // Mobile menu toggle
+        // Mobile detection and menu toggle
         document.addEventListener('DOMContentLoaded', () => {
+            const isMobile = window.innerWidth <= 768;
             const menuBtn = document.getElementById('mobileMenuButton');
             const menu = document.getElementById('mobileMenu');
+            const desktopNav = document.querySelector('header nav.desktop-nav');
+            
+            // Force hide/show based on screen size
+            if (isMobile) {
+                if (desktopNav) {
+                    desktopNav.style.display = 'none';
+                }
+                if (menuBtn) {
+                    menuBtn.style.display = 'flex';
+                }
+            }
+            
             if (menuBtn && menu) {
                 menuBtn.addEventListener('click', () => {
                     const isHidden = menu.classList.contains('hidden');
@@ -2027,6 +2040,21 @@
                     });
                 });
             }
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                const nowMobile = window.innerWidth <= 768;
+                if (desktopNav) {
+                    desktopNav.style.display = nowMobile ? 'none' : '';
+                }
+                if (menuBtn) {
+                    menuBtn.style.display = nowMobile ? 'flex' : '';
+                }
+                if (menu && !nowMobile) {
+                    menu.classList.add('hidden');
+                    menu.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>
