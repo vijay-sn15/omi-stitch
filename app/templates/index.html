@@ -917,10 +917,8 @@
         <div class="py-24 px-6 bg-[#faf9f6] dark:bg-white/5 border-y border-black/5 dark:border-white/10">
             <div class="max-w-4xl mx-auto text-center">
                 <div class="mb-10 inline-block">
-                    <div class="storytelling-gold opacity-60">
-                        <svg class="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"></path>
-                        </svg>
+                    <div class="opacity-60">
+                        <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="w-24 h-auto mx-auto" />
                     </div>
                 </div>
                 <h2 class="text-[#2D2D2D] dark:text-white text-4xl md:text-5xl font-bold mb-6 tracking-tight">Ready to Begin?</h2>
@@ -939,11 +937,7 @@
         <div class="max-w-[960px] mx-auto px-10 py-16 flex flex-col gap-10">
             <div class="flex flex-col md:flex-row justify-between items-center gap-8">
                 <div class="flex items-center gap-3">
-                    <div class="text-primary">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 48 48">
-                            <path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"></path>
-                        </svg>
-                    </div>
+                    <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="w-10 h-auto" />
                     <span class="font-extrabold text-xl tracking-tighter">OMI</span>
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-8">
@@ -1023,6 +1017,8 @@
 
         // Store logo image positions
         let logoImagePositions = null;
+        // Store callback icon positions (incoming call SVG)
+        let callbackImagePositions = null;
 
         // Gold color palette
         const GOLD_COLORS = [
@@ -1108,6 +1104,8 @@
 
                 // Pre-load logo image for final step
                 loadLogoImage();
+                // Pre-load callback icon for callback step
+                loadCallbackImage();
 
                 // Start with trees
                 setTimeout(startExperience, 500);
@@ -1242,32 +1240,108 @@
         }
 
         function generateScrollPositions() {
+            // Document with arrow shape (Submit Profile icon)
             const positions = new Float32Array(PARTICLE_COUNT * 3);
+            
+            // Document dimensions
+            const docWidth = 40;
+            const docHeight = 50;
+            const docX = -10; // Offset left to make room for arrow
+            const foldSize = 12;
+            const lineThickness = 2;
             
             for (let i = 0; i < PARTICLE_COUNT; i++) {
                 const t = Math.random();
                 
-                if (t < 0.6) {
-                    const u = Math.random() * Math.PI * 1.5 - Math.PI * 0.25;
-                    const v = (Math.random() - 0.5) * 50;
-                    const radius = 12;
+                if (t < 0.25) {
+                    // Document outline (left, bottom, partial top, partial right)
+                    const edge = Math.random();
+                    if (edge < 0.25) {
+                        // Left edge
+                        positions[i * 3] = docX - docWidth/2 + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 1] = (Math.random() - 0.5) * docHeight;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    } else if (edge < 0.5) {
+                        // Bottom edge
+                        positions[i * 3] = docX + (Math.random() - 0.5) * docWidth;
+                        positions[i * 3 + 1] = -docHeight/2 + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    } else if (edge < 0.75) {
+                        // Top edge (shorter due to fold)
+                        positions[i * 3] = docX - docWidth/4 + (Math.random() - 0.3) * (docWidth - foldSize);
+                        positions[i * 3 + 1] = docHeight/2 + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    } else {
+                        // Right edge (shorter due to fold)
+                        positions[i * 3] = docX + docWidth/2 + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 1] = (Math.random() - 0.6) * (docHeight - foldSize);
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    }
+                } else if (t < 0.35) {
+                    // Folded corner (triangle)
+                    const foldT = Math.random();
+                    const cornerX = docX + docWidth/2;
+                    const cornerY = docHeight/2;
                     
-                    positions[i * 3] = Math.sin(u) * radius + v * 0.3;
-                    positions[i * 3 + 1] = v * 0.8;
-                    positions[i * 3 + 2] = Math.cos(u) * radius - 10;
-                } else if (t < 0.8) {
-                    const curl = Math.random() < 0.5 ? 1 : -1;
-                    const angle = Math.random() * Math.PI * 2;
-                    const r = 4 + Math.random() * 2;
+                    if (foldT < 0.4) {
+                        // Diagonal fold line
+                        const diagT = Math.random();
+                        positions[i * 3] = cornerX - foldSize * diagT + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 1] = cornerY - foldSize * (1 - diagT) + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    } else if (foldT < 0.7) {
+                        // Horizontal part of fold
+                        positions[i * 3] = cornerX - foldSize + Math.random() * foldSize;
+                        positions[i * 3 + 1] = cornerY + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    } else {
+                        // Vertical part of fold
+                        positions[i * 3] = cornerX + (Math.random() - 0.5) * lineThickness;
+                        positions[i * 3 + 1] = cornerY - foldSize + Math.random() * foldSize;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                    }
+                } else if (t < 0.55) {
+                    // Text lines inside document
+                    const lineNum = Math.floor(Math.random() * 5);
+                    const lineWidth = 25 - lineNum * 2; // Lines get slightly shorter
+                    const lineY = 15 - lineNum * 10;
                     
-                    positions[i * 3] = Math.cos(angle) * r * 0.5;
-                    positions[i * 3 + 1] = curl * 22 + Math.sin(angle) * r;
-                    positions[i * 3 + 2] = Math.cos(angle) * r - 5;
+                    positions[i * 3] = docX - 5 + (Math.random() - 0.3) * lineWidth;
+                    positions[i * 3 + 1] = lineY + (Math.random() - 0.5) * lineThickness;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+                } else if (t < 0.85) {
+                    // Arrow pointing right
+                    const arrowX = 25;
+                    const arrowY = -15;
+                    const arrowLength = 25;
+                    const arrowHeadSize = 15;
+                    
+                    const arrowPart = Math.random();
+                    if (arrowPart < 0.4) {
+                        // Arrow shaft
+                        positions[i * 3] = arrowX - arrowLength/2 + Math.random() * arrowLength;
+                        positions[i * 3 + 1] = arrowY + (Math.random() - 0.5) * 6;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
+                    } else if (arrowPart < 0.7) {
+                        // Arrow head - top diagonal
+                        const headT = Math.random();
+                        positions[i * 3] = arrowX + arrowLength/2 - headT * arrowHeadSize + (Math.random() - 0.5) * 3;
+                        positions[i * 3 + 1] = arrowY + headT * arrowHeadSize + (Math.random() - 0.5) * 3;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
+                    } else {
+                        // Arrow head - bottom diagonal
+                        const headT = Math.random();
+                        positions[i * 3] = arrowX + arrowLength/2 - headT * arrowHeadSize + (Math.random() - 0.5) * 3;
+                        positions[i * 3 + 1] = arrowY - headT * arrowHeadSize + (Math.random() - 0.5) * 3;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
+                    }
                 } else {
-                    const line = Math.floor(Math.random() * 5);
-                    positions[i * 3] = (Math.random() - 0.5) * 25;
-                    positions[i * 3 + 1] = 15 - line * 8 + (Math.random() - 0.5) * 2;
-                    positions[i * 3 + 2] = -3 + Math.random() * 3;
+                    // Ambient particles around the shape
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 40 + Math.random() * 25;
+                    positions[i * 3] = Math.cos(angle) * dist;
+                    positions[i * 3 + 1] = Math.sin(angle) * dist * 0.7;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
                 }
             }
 
@@ -1275,29 +1349,28 @@
         }
 
         function generateSpiralPositions() {
+            // Phone + callback arrow using sampled SVG pixels
             const positions = new Float32Array(PARTICLE_COUNT * 3);
-            
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                const t = i / PARTICLE_COUNT;
-                
-                if (t < 0.7) {
-                    const angle = t * Math.PI * 12;
-                    const radius = 15 + Math.sin(angle * 0.5) * 5;
-                    const strand = i % 2 === 0 ? 0 : Math.PI;
-                    
-                    positions[i * 3] = Math.cos(angle + strand) * radius;
-                    positions[i * 3 + 1] = (t - 0.35) * 80;
-                    positions[i * 3 + 2] = Math.sin(angle + strand) * radius * 0.5 + (Math.random() - 0.5) * 3;
-                } else {
-                    const waveAngle = Math.random() * Math.PI * 2;
-                    const waveDist = 20 + Math.random() * 30;
-                    
-                    positions[i * 3] = Math.cos(waveAngle) * waveDist;
-                    positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
-                    positions[i * 3 + 2] = Math.sin(waveAngle) * waveDist * 0.3;
+
+            if (callbackImagePositions) {
+                const totalPoints = callbackImagePositions.length / 3;
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const baseIdx = Math.floor(Math.random() * totalPoints) * 3;
+                    positions[i * 3] = callbackImagePositions[baseIdx] + (Math.random() - 0.5) * 1.2;
+                    positions[i * 3 + 1] = callbackImagePositions[baseIdx + 1] + (Math.random() - 0.5) * 1.2;
+                    positions[i * 3 + 2] = callbackImagePositions[baseIdx + 2] + (Math.random() - 0.5) * 6;
                 }
+                return positions;
             }
 
+            // Fallback: simple arc while icon loads
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const angle = Math.random() * Math.PI * 1.2 + Math.PI * 0.2;
+                const radius = 40 + Math.random() * 10;
+                positions[i * 3] = Math.cos(angle) * radius;
+                positions[i * 3 + 1] = Math.sin(angle) * radius;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+            }
             return positions;
         }
 
@@ -1550,6 +1623,63 @@
                     resolve(generateLogoPositions());
                 };
                 img.src = '/static/images/omi-logo-transparent-graphic.png';
+            });
+        }
+
+        // Load and process callback icon (incoming call SVG) for Step 2
+        async function loadCallbackImage() {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    const sampleSize = 180;
+                    const aspectRatio = img.width / img.height;
+                    canvas.width = sampleSize;
+                    canvas.height = Math.floor(sampleSize / aspectRatio);
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pixels = imageData.data;
+
+                    const validPositions = [];
+                    for (let y = 0; y < canvas.height; y++) {
+                        for (let x = 0; x < canvas.width; x++) {
+                            const i = (y * canvas.width + x) * 4;
+                            const alpha = pixels[i + 3];
+                            if (alpha > 100) {
+                                validPositions.push({
+                                    x: (x / canvas.width - 0.5) * 110,
+                                    y: -(y / canvas.height - 0.5) * 110 / aspectRatio
+                                });
+                            }
+                        }
+                    }
+
+                    const positions = new Float32Array(PARTICLE_COUNT * 3);
+                    for (let i = 0; i < PARTICLE_COUNT; i++) {
+                        if (validPositions.length > 0) {
+                            const pos = validPositions[Math.floor(Math.random() * validPositions.length)];
+                            positions[i * 3] = pos.x + (Math.random() - 0.5) * 1.5;
+                            positions[i * 3 + 1] = pos.y + (Math.random() - 0.5) * 1.5;
+                            positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+                        } else {
+                            positions[i * 3] = (Math.random() - 0.5) * 100;
+                            positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+                            positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+                        }
+                    }
+
+                    callbackImagePositions = positions;
+                    resolve(positions);
+                };
+                img.onerror = () => {
+                    console.warn('Failed to load callback icon image, using fallback');
+                    resolve(null);
+                };
+                img.src = '/static/images/incoming-call-icon.svg';
             });
         }
 
