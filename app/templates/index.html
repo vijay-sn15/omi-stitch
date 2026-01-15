@@ -4,8 +4,14 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>OMI - The Big Picture</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon-circle.svg"/>
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/favicon-512x512.png"/>
+    <link rel="icon" type="image/png" sizes="256x256" href="/static/favicon-256x256.png"/>
+    <link rel="icon" type="image/png" sizes="128x128" href="/static/favicon-128x128.png"/>
+    <link rel="icon" type="image/png" sizes="64x64" href="/static/favicon-64x64.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png"/>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico"/>
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png"/>
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
     <link href="/static/css/output.css" rel="stylesheet"/>
     <style>
@@ -107,6 +113,43 @@
         /* Smooth scroll */
         html {
             scroll-behavior: smooth;
+        }
+        
+        /* Fixed Logo (top left when main logo is out of view) */
+        .fixed-logo {
+            left: 2.5rem; /* px-10 = 2.5rem, aligns with main logo on mobile */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        @media (min-width: 768px) {
+            .fixed-logo {
+                left: 6rem; /* px-24 = 6rem, aligns with main logo on desktop */
+            }
+        }
+        
+        .fixed-logo-circle {
+            width: 120px;
+            height: 120px;
+            background-color: #000000; /* Solid black background */
+            /* Perfect circle - width and height are equal */
+        }
+        
+        .fixed-logo-image {
+            width: 90px;
+            height: 90px;
+            object-fit: contain; /* Maintain aspect ratio, no stretching */
+            object-position: center;
+        }
+        
+        .fixed-logo.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+        }
+        
+        .fixed-logo:not(.hidden) {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         /* Hero Main Logo Animation */
@@ -894,6 +937,13 @@
             <div class="absolute inset-0 bg-black/30 z-10"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-10"></div>
             <img alt="Serene landscape with mountains and mist" class="w-full h-full object-cover" src="/static/images/hero-landscape.jpg"/>
+        </div>
+        
+        <!-- Fixed Logo (shown when main logo is out of view) -->
+        <div id="fixedLogo" class="fixed-logo hidden fixed top-4 z-[100]">
+            <div class="fixed-logo-circle rounded-full bg-black/90 backdrop-blur-sm border border-white/10 flex items-center justify-center shadow-lg">
+                <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="fixed-logo-image"/>
+            </div>
         </div>
         
         <!-- Top Navigation Bar -->
@@ -2335,6 +2385,34 @@
             
             // Listen for resize events
             window.addEventListener('resize', handleResize);
+        });
+        
+        // Fixed logo visibility based on main logo scroll position
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainLogo = document.querySelector('.hero-main-logo');
+            const fixedLogo = document.getElementById('fixedLogo');
+            
+            if (!mainLogo || !fixedLogo) return;
+            
+            // Create Intersection Observer to watch main logo
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Main logo is visible - hide fixed logo
+                        fixedLogo.classList.add('hidden');
+                    } else {
+                        // Main logo is out of view - show fixed logo
+                        fixedLogo.classList.remove('hidden');
+                    }
+                });
+            }, {
+                // Trigger when logo is completely out of view
+                threshold: 0,
+                rootMargin: '0px'
+            });
+            
+            // Start observing the main logo
+            observer.observe(mainLogo);
         });
     </script>
 </body>
