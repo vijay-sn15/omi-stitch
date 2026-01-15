@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>OMI - The Big Picture</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png"/>
     <link href="/static/css/output.css" rel="stylesheet"/>
     <style>
         /* Contact panel slide animation */
@@ -104,6 +105,419 @@
         /* Smooth scroll */
         html {
             scroll-behavior: smooth;
+        }
+        
+        /* Hero Main Logo Animation */
+        .hero-main-logo {
+            position: relative;
+            display: inline-block;
+            animation: heroMainFloat 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.6));
+        }
+        
+        .hero-main-logo img {
+            width: auto;
+            height: 140px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-main-logo img {
+                height: 200px;
+            }
+        }
+        
+        /* Floating animation */
+        @keyframes heroMainFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.6));
+            }
+            25% {
+                transform: translateY(-8px) rotate(0.5deg);
+                filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.7));
+            }
+            50% {
+                transform: translateY(-4px) rotate(0deg);
+                filter: drop-shadow(0 0 50px rgba(0, 0, 0, 0.8));
+            }
+            75% {
+                transform: translateY(-10px) rotate(-0.5deg);
+                filter: drop-shadow(0 0 35px rgba(0, 0, 0, 0.65));
+            }
+        }
+        
+        /* Pulsing glow effect */
+        .hero-main-logo::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(
+                ellipse at center,
+                rgba(0, 0, 0, 0.3) 0%,
+                rgba(0, 0, 0, 0.15) 30%,
+                transparent 60%
+            );
+            animation: heroGlowPulse 3s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+        
+        @keyframes heroGlowPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        /* ===== Hero Animation Styles ===== */
+        #hero-canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        #hero-canvas-container canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: auto;
+            width: 60%;
+            height: 100%;
+        }
+
+        /* Logo container for final animation (right-aligned) */
+        #hero-logo-container {
+            position: absolute;
+            top: 50%;
+            right: 20%;
+            transform: translate(50%, -50%) scale(0);
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+
+        #hero-logo-container.visible {
+            opacity: 1;
+            animation: heroLogoFloat 8s ease-in-out infinite, heroLogoScale 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        #hero-logo-container.grow {
+            animation: heroLogoFloat 8s ease-in-out infinite, heroLogoGrow 3s ease-in-out forwards;
+        }
+
+        @keyframes heroLogoFloat {
+            0%, 100% {
+                transform: translate(50%, -50%) rotateY(0deg) rotateX(0deg);
+            }
+            25% {
+                transform: translate(50%, -48%) rotateY(5deg) rotateX(2deg);
+            }
+            50% {
+                transform: translate(50%, -50%) rotateY(0deg) rotateX(0deg);
+            }
+            75% {
+                transform: translate(50%, -52%) rotateY(-5deg) rotateX(-2deg);
+            }
+        }
+
+        @keyframes heroLogoScale {
+            0% {
+                transform: translate(50%, -50%) scale(0) rotateY(0deg);
+            }
+            100% {
+                transform: translate(50%, -50%) scale(1) rotateY(0deg);
+            }
+        }
+
+        @keyframes heroLogoGrow {
+            0% {
+                transform: translate(50%, -50%) scale(1) rotateY(0deg);
+            }
+            100% {
+                transform: translate(50%, -50%) scale(1.3) rotateY(10deg);
+            }
+        }
+
+        #hero-logo-container img {
+            max-width: 300px;
+            height: auto;
+            filter: drop-shadow(0 0 30px rgba(201, 162, 39, 0.5));
+            animation: heroLogoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroLogoGlow {
+            0% {
+                filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.4));
+            }
+            100% {
+                filter: drop-shadow(0 0 40px rgba(244, 214, 117, 0.7));
+            }
+        }
+
+        /* Trees logo - positioned above particles (right-aligned) */
+        #hero-trees-logo {
+            position: absolute;
+            top: 120px;
+            right: 20%;
+            transform: translateX(50%);
+            z-index: 7;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+
+        #hero-trees-logo.visible {
+            opacity: 1;
+        }
+
+        #hero-trees-logo .logo-wrapper {
+            position: relative;
+            animation: heroLogoOscillate 2s ease-in-out infinite;
+        }
+
+        #hero-trees-logo img {
+            max-width: 120px;
+            height: auto;
+            filter: drop-shadow(0 0 25px rgba(201, 162, 39, 0.6));
+            animation: heroLogoShine 3s ease-in-out infinite;
+        }
+
+        @keyframes heroLogoOscillate {
+            0%, 100% {
+                transform: scale(0.9);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes heroLogoShine {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.5)) brightness(1);
+            }
+            25% {
+                filter: drop-shadow(0 0 35px rgba(244, 214, 117, 0.8)) brightness(1.2);
+            }
+            50% {
+                filter: drop-shadow(0 0 25px rgba(201, 162, 39, 0.6)) brightness(1);
+            }
+            75% {
+                filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.9)) brightness(1.3);
+            }
+        }
+
+        /* Particle burst container */
+        .hero-particle-burst {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Firework sparkle particles - gold */
+        .hero-sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ffd700;
+            opacity: 0;
+        }
+
+        .hero-sparkle::before,
+        .hero-sparkle::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #f4d675;
+        }
+
+        .hero-sparkle::before {
+            top: -8px;
+            left: 0;
+            opacity: 0.7;
+        }
+
+        .hero-sparkle::after {
+            top: -16px;
+            left: 1px;
+            width: 2px;
+            height: 2px;
+            opacity: 0.4;
+        }
+
+        #hero-trees-logo.visible .hero-sparkle {
+            animation: heroFireworkBurst 1.8s ease-out infinite;
+        }
+
+        .hero-sparkle:nth-child(1) { animation-delay: 0s; }
+        .hero-sparkle:nth-child(2) { animation-delay: 0.1s; }
+        .hero-sparkle:nth-child(3) { animation-delay: 0.2s; }
+        .hero-sparkle:nth-child(4) { animation-delay: 0.3s; }
+        .hero-sparkle:nth-child(5) { animation-delay: 0.4s; }
+        .hero-sparkle:nth-child(6) { animation-delay: 0.5s; }
+        .hero-sparkle:nth-child(7) { animation-delay: 0.9s; }
+        .hero-sparkle:nth-child(8) { animation-delay: 1.0s; }
+        .hero-sparkle:nth-child(9) { animation-delay: 1.1s; }
+        .hero-sparkle:nth-child(10) { animation-delay: 1.2s; }
+        .hero-sparkle:nth-child(11) { animation-delay: 1.3s; }
+        .hero-sparkle:nth-child(12) { animation-delay: 1.4s; }
+
+        @keyframes heroFireworkBurst {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(var(--angle));
+                box-shadow: 
+                    0 0 8px 4px rgba(255, 215, 0, 1),
+                    0 0 20px 8px rgba(255, 215, 0, 0.6),
+                    0 0 40px 15px rgba(244, 214, 117, 0.3);
+            }
+            30% {
+                opacity: 1;
+                box-shadow: 
+                    0 0 12px 6px rgba(255, 215, 0, 0.9),
+                    0 0 30px 12px rgba(255, 165, 0, 0.5),
+                    0 0 50px 20px rgba(201, 162, 39, 0.2);
+            }
+            60% {
+                opacity: 0.7;
+                box-shadow: 
+                    0 0 6px 3px rgba(255, 215, 0, 0.6),
+                    0 0 15px 6px rgba(255, 165, 0, 0.3);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(var(--angle));
+                box-shadow: 0 0 4px 2px rgba(201, 162, 39, 0.2);
+            }
+        }
+
+        .hero-sparkle:nth-child(1)  { --tx: 0px;    --ty: -120px; --angle: 0deg; }
+        .hero-sparkle:nth-child(2)  { --tx: 85px;   --ty: -85px;  --angle: 45deg; }
+        .hero-sparkle:nth-child(3)  { --tx: 120px;  --ty: 0px;    --angle: 90deg; }
+        .hero-sparkle:nth-child(4)  { --tx: 85px;   --ty: 85px;   --angle: 135deg; }
+        .hero-sparkle:nth-child(5)  { --tx: 0px;    --ty: 120px;  --angle: 180deg; }
+        .hero-sparkle:nth-child(6)  { --tx: -85px;  --ty: 85px;   --angle: 225deg; }
+        .hero-sparkle:nth-child(7)  { --tx: -120px; --ty: 0px;    --angle: 270deg; }
+        .hero-sparkle:nth-child(8)  { --tx: -85px;  --ty: -85px;  --angle: 315deg; }
+        .hero-sparkle:nth-child(9)  { --tx: 60px;   --ty: -100px; --angle: 30deg; }
+        .hero-sparkle:nth-child(10) { --tx: 100px;  --ty: 60px;   --angle: 60deg; }
+        .hero-sparkle:nth-child(11) { --tx: -60px;  --ty: 100px;  --angle: 210deg; }
+        .hero-sparkle:nth-child(12) { --tx: -100px; --ty: -60px;  --angle: 240deg; }
+
+        /* Stage text overlay (center-aligned with animation) */
+        .hero-stage-text {
+            position: absolute;
+            bottom: 120px;
+            right: 30%;
+            transform: translateX(50%);
+            color: #c9a227;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 8;
+            text-shadow: 0 0 30px rgba(201, 162, 39, 0.8), 0 0 60px rgba(201, 162, 39, 0.4);
+            letter-spacing: 3px;
+            pointer-events: none;
+        }
+
+        .hero-stage-text.visible {
+            opacity: 1;
+        }
+
+        .hero-stage-text .step-number {
+            display: none;
+        }
+
+        .hero-stage-text .step-title {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #c9a227, #f4d675, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.5));
+        }
+
+        .hero-stage-text .step-desc {
+            display: block;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            max-width: 500px;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #f4d675;
+            text-shadow: 0 0 15px rgba(201, 162, 39, 0.5);
+        }
+
+        /* Intro text for trees (center-aligned with animation) */
+        .hero-intro-text {
+            position: absolute;
+            bottom: 120px;
+            right: 30%;
+            transform: translateX(50%);
+            color: #c9a227;
+            font-size: 2rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 8;
+            pointer-events: none;
+        }
+
+        .hero-intro-text.visible {
+            opacity: 1;
+        }
+
+        .hero-intro-text .main {
+            display: block;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #c9a227, #f4d675, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 20px rgba(201, 162, 39, 0.5));
+        }
+
+        .hero-intro-text .sub {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 500;
+            opacity: 0.95;
+            letter-spacing: 4px;
+            color: #f4d675;
+            text-shadow: 0 0 20px rgba(201, 162, 39, 0.6);
         }
     </style>
 </head>
@@ -262,16 +676,26 @@
             <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-10"></div>
             <img alt="Serene landscape with mountains and mist" class="w-full h-full object-cover" src="/static/images/hero-landscape.jpg"/>
         </div>
+        
+        <!-- Three.js Particle Animation Canvas -->
+        <div id="hero-canvas-container"></div>
+        
+        
+        <!-- Intro Text -->
+        <div class="hero-intro-text" id="heroIntroText">
+            <span class="main">The Journey Begins</span>
+            <span class="sub">Where stories take root and grow</span>
+        </div>
+        
+        <!-- Stage Text for Steps -->
+        <div class="hero-stage-text" id="heroStageText">
+            <span class="step-number" id="heroStepNumber"></span>
+            <span class="step-title" id="heroStepTitle"></span>
+            <span class="step-desc" id="heroStepDesc"></span>
+        </div>
+        
         <!-- Top Navigation Bar -->
         <header class="relative z-50 flex items-center justify-between px-10 py-6 glass-nav border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="text-primary">
-                    <svg class="w-8 h-8" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="currentColor"></path>
-                    </svg>
-                </div>
-                <h2 class="text-white text-2xl font-extrabold tracking-tighter">OMI</h2>
-            </div>
             <nav class="hidden md:flex items-center gap-10">
                 <a class="text-white/80 hover:text-primary transition-colors text-sm font-medium uppercase tracking-widest" href="#">About</a>
                 <a class="text-white/80 hover:text-primary transition-colors text-sm font-medium uppercase tracking-widest" href="#storytelling">Storytelling</a>
@@ -287,9 +711,9 @@
         <!-- Main Hero Content -->
         <main class="relative z-20 flex-1 flex flex-col justify-center px-10 md:px-24 max-w-7xl">
             <div class="max-w-2xl">
-                <h1 class="text-white text-7xl md:text-9xl font-extrabold leading-none tracking-[-0.05em] mb-4">
-                    OMI
-                </h1>
+                <div class="hero-main-logo mb-6">
+                    <img src="/static/images/omi-logo-transparent-latest.png" alt="OMI"/>
+                </div>
                 <h2 class="text-white/90 text-2xl md:text-4xl font-light tracking-wide mb-8">
                     A Vision Beyond Cinema.
                 </h2>
@@ -305,10 +729,6 @@
                     </p>
                 </div>
                 <div class="flex flex-col items-center md:items-end gap-6">
-                    <button class="flex items-center gap-3 bg-primary text-[#112116] px-8 py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(180,148,30,0.4)] transition-all">
-                        <span>Explore the Hub</span>
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button>
                     <div class="flex items-center gap-2 text-white/40">
                         <span class="text-xs uppercase tracking-[0.3em]">Scroll for more</span>
                         <span class="material-symbols-outlined animate-bounce text-sm">expand_more</span>
@@ -546,6 +966,672 @@
             </p>
         </div>
     </footer>
+    
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <!-- Hero Particle Animation -->
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Configuration
+        const PARTICLE_COUNT = 15000;
+        const STAGE_DURATION = 8000; // 8 seconds per step for particles to fully form
+
+        // OMI Storytelling Steps
+        const STORYTELLING_STEPS = [
+            {
+                number: "STEP ONE",
+                title: "Submit Profile & Project",
+                desc: "Introduce your vision through our curated submission form",
+                shape: "scroll"
+            },
+            {
+                number: "STEP TWO", 
+                title: "The Callback",
+                desc: "We reach out to explore the narrative's soul and depth",
+                shape: "spiral"
+            },
+            {
+                number: "STEP THREE",
+                title: "In-Person Review",
+                desc: "A personal creative session to align storytelling values",
+                shape: "circle"
+            },
+            {
+                number: "STEP FOUR",
+                title: "Producer Meeting",
+                desc: "Strategic roadmap from script to global screens",
+                shape: "film"
+            },
+            {
+                number: "STEP FIVE",
+                title: "Final Agreement",
+                desc: "Partnership commences in the OMI ecosystem",
+                shape: "phoenix"
+            }
+        ];
+
+        // Gold color palette
+        const GOLD_COLORS = [
+            new THREE.Color(0xc9a227),
+            new THREE.Color(0xf4d675),
+            new THREE.Color(0xd4af37),
+            new THREE.Color(0xffd700),
+            new THREE.Color(0xb8860b),
+            new THREE.Color(0xdaa520),
+        ];
+
+        let scene, camera, renderer, particles;
+        let currentStage = 'trees';
+        let targetPositions = [];
+        let time = 0;
+        let stageStartTime = 0;
+
+        async function initHeroAnimation() {
+            const container = document.getElementById('hero-canvas-container');
+            if (!container) return;
+            
+            // Check for WebGL support with Chrome-compatible attributes
+            const testCanvas = document.createElement('canvas');
+            const contextAttributes = {
+                alpha: true,
+                antialias: false,
+                depth: false,
+                stencil: false,
+                preserveDrawingBuffer: false,
+                powerPreference: 'default',
+                failIfMajorPerformanceCaveat: false
+            };
+            
+            // Try WebGL2 first, then WebGL1
+            let gl = testCanvas.getContext('webgl2', contextAttributes);
+            if (!gl) {
+                gl = testCanvas.getContext('webgl', contextAttributes) || 
+                     testCanvas.getContext('experimental-webgl', contextAttributes);
+            }
+            
+            if (!gl) {
+                console.warn('WebGL not supported, hero animation disabled');
+                hideAnimationElements();
+                return;
+            }
+            
+            try {
+                scene = new THREE.Scene();
+                
+                camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 100;
+
+                // Create canvas element explicitly for better Chrome compatibility
+                const canvas = document.createElement('canvas');
+                container.appendChild(canvas);
+                
+                // Right-aligned: use 60% of viewport width
+                const canvasWidth = Math.floor(window.innerWidth * 0.6);
+                const canvasHeight = window.innerHeight;
+
+                renderer = new THREE.WebGLRenderer({ 
+                    canvas: canvas,
+                    antialias: true, 
+                    alpha: true,
+                    powerPreference: 'default',
+                    failIfMajorPerformanceCaveat: false,
+                    preserveDrawingBuffer: false
+                });
+                
+                renderer.setSize(canvasWidth, canvasHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                renderer.setClearColor(0x000000, 0);
+                
+                // Update camera aspect ratio for narrower canvas
+                camera.aspect = canvasWidth / canvasHeight;
+                camera.updateProjectionMatrix();
+
+                createParticles();
+                setParticlePositions('trees');
+
+                window.addEventListener('resize', onWindowResize);
+                animate();
+
+                // Start with trees
+                setTimeout(startExperience, 500);
+            } catch (e) {
+                console.warn('Failed to initialize hero animation:', e.message);
+                hideAnimationElements();
+            }
+        }
+        
+        function hideAnimationElements() {
+            const container = document.getElementById('hero-canvas-container');
+            const introText = document.getElementById('heroIntroText');
+            const stageText = document.getElementById('heroStageText');
+            if (container) container.style.display = 'none';
+            if (introText) introText.style.display = 'none';
+            if (stageText) stageText.style.display = 'none';
+        }
+
+        function createParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            const colors = new Float32Array(PARTICLE_COUNT * 3);
+            const sizes = new Float32Array(PARTICLE_COUNT);
+            const alphas = new Float32Array(PARTICLE_COUNT);
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                positions[i * 3] = 0;
+                positions[i * 3 + 1] = 0;
+                positions[i * 3 + 2] = 0;
+
+                const color = GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)];
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+
+                sizes[i] = Math.random() * 2 + 0.5;
+                alphas[i] = 0;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
+
+            targetPositions = new Float32Array(PARTICLE_COUNT * 3);
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 },
+                    pixelRatio: { value: Math.min(window.devicePixelRatio, 2) }
+                },
+                vertexShader: `
+                    attribute float size;
+                    attribute vec3 color;
+                    attribute float alpha;
+                    varying vec3 vColor;
+                    varying float vAlpha;
+                    uniform float time;
+                    uniform float pixelRatio;
+                    
+                    void main() {
+                        vColor = color;
+                        vAlpha = alpha;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * pixelRatio * (180.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    varying float vAlpha;
+                    
+                    void main() {
+                        float dist = length(gl_PointCoord - vec2(0.5));
+                        if (dist > 0.5) discard;
+                        float glow = 1.0 - smoothstep(0.0, 0.5, dist);
+                        gl_FragColor = vec4(vColor, glow * vAlpha);
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+
+        // ===== SHAPE GENERATORS =====
+
+        function generateTreePositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            const treeCount = 9;
+            const particlesPerTree = Math.floor(PARTICLE_COUNT * 0.75 / treeCount);
+            const groundParticles = PARTICLE_COUNT - particlesPerTree * treeCount;
+            let idx = 0;
+
+            for (let t = 0; t < treeCount; t++) {
+                const treeX = (t - treeCount / 2) * 15 + (Math.random() - 0.5) * 5;
+                const treeHeight = 30 + Math.random() * 20;
+                const treeZ = (Math.random() - 0.5) * 25;
+
+                for (let i = 0; i < particlesPerTree && idx < PARTICLE_COUNT; i++) {
+                    const heightRatio = Math.random();
+                    const y = -28 + heightRatio * treeHeight;
+
+                    if (heightRatio < 0.3) {
+                        const trunkRadius = 1.8 * (1 - heightRatio * 0.4);
+                        const angle = Math.random() * Math.PI * 2;
+                        positions[idx * 3] = treeX + Math.cos(angle) * trunkRadius * Math.random();
+                        positions[idx * 3 + 1] = y;
+                        positions[idx * 3 + 2] = treeZ + Math.sin(angle) * trunkRadius * Math.random();
+                    } else {
+                        const spread = (heightRatio - 0.3) * 14 * Math.sin(heightRatio * Math.PI * 0.8);
+                        const angle = Math.random() * Math.PI * 2;
+                        const dist = Math.random() * spread;
+                        positions[idx * 3] = treeX + Math.cos(angle) * dist;
+                        positions[idx * 3 + 1] = y + (Math.random() - 0.5) * 4;
+                        positions[idx * 3 + 2] = treeZ + Math.sin(angle) * dist;
+                    }
+                    idx++;
+                }
+            }
+
+            for (; idx < PARTICLE_COUNT; idx++) {
+                positions[idx * 3] = (Math.random() - 0.5) * 140;
+                positions[idx * 3 + 1] = -28 + Math.random() * 5;
+                positions[idx * 3 + 2] = (Math.random() - 0.5) * 50;
+            }
+
+            return positions;
+        }
+
+        function generateScrollPositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const t = Math.random();
+                
+                if (t < 0.6) {
+                    const u = Math.random() * Math.PI * 1.5 - Math.PI * 0.25;
+                    const v = (Math.random() - 0.5) * 50;
+                    const radius = 12;
+                    
+                    positions[i * 3] = Math.sin(u) * radius + v * 0.3;
+                    positions[i * 3 + 1] = v * 0.8;
+                    positions[i * 3 + 2] = Math.cos(u) * radius - 10;
+                } else if (t < 0.8) {
+                    const curl = Math.random() < 0.5 ? 1 : -1;
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = 4 + Math.random() * 2;
+                    
+                    positions[i * 3] = Math.cos(angle) * r * 0.5;
+                    positions[i * 3 + 1] = curl * 22 + Math.sin(angle) * r;
+                    positions[i * 3 + 2] = Math.cos(angle) * r - 5;
+                } else {
+                    const line = Math.floor(Math.random() * 5);
+                    positions[i * 3] = (Math.random() - 0.5) * 25;
+                    positions[i * 3 + 1] = 15 - line * 8 + (Math.random() - 0.5) * 2;
+                    positions[i * 3 + 2] = -3 + Math.random() * 3;
+                }
+            }
+
+            return positions;
+        }
+
+        function generateSpiralPositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const t = i / PARTICLE_COUNT;
+                
+                if (t < 0.7) {
+                    const angle = t * Math.PI * 12;
+                    const radius = 15 + Math.sin(angle * 0.5) * 5;
+                    const strand = i % 2 === 0 ? 0 : Math.PI;
+                    
+                    positions[i * 3] = Math.cos(angle + strand) * radius;
+                    positions[i * 3 + 1] = (t - 0.35) * 80;
+                    positions[i * 3 + 2] = Math.sin(angle + strand) * radius * 0.5 + (Math.random() - 0.5) * 3;
+                } else {
+                    const waveAngle = Math.random() * Math.PI * 2;
+                    const waveDist = 20 + Math.random() * 30;
+                    
+                    positions[i * 3] = Math.cos(waveAngle) * waveDist;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+                    positions[i * 3 + 2] = Math.sin(waveAngle) * waveDist * 0.3;
+                }
+            }
+
+            return positions;
+        }
+
+        function generateCirclePositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            const tableParticles = Math.floor(PARTICLE_COUNT * 0.45);
+            const chairParticles = Math.floor(PARTICLE_COUNT * 0.40);
+            
+            let idx = 0;
+            const tableX = -15;
+            const tableTopY = 0;
+            const tableWidth = 35;
+            const tableThickness = 3;
+            
+            for (let i = 0; i < tableParticles && idx < PARTICLE_COUNT; i++) {
+                const part = Math.random();
+                
+                if (part < 0.5) {
+                    positions[idx * 3] = tableX + (Math.random() - 0.5) * tableWidth;
+                    positions[idx * 3 + 1] = tableTopY + (Math.random() - 0.5) * tableThickness;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * 8;
+                } else if (part < 0.75) {
+                    const legX = tableX - tableWidth * 0.4;
+                    positions[idx * 3] = legX + (Math.random() - 0.5) * 3;
+                    positions[idx * 3 + 1] = -25 + Math.random() * 25;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * 3;
+                } else {
+                    const legX = tableX + tableWidth * 0.4;
+                    positions[idx * 3] = legX + (Math.random() - 0.5) * 3;
+                    positions[idx * 3 + 1] = -25 + Math.random() * 25;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * 3;
+                }
+                idx++;
+            }
+            
+            const chairX = 25;
+            const seatY = -8;
+            const seatWidth = 14;
+            const seatDepth = 4;
+            const backHeight = 25;
+            
+            for (let i = 0; i < chairParticles && idx < PARTICLE_COUNT; i++) {
+                const part = Math.random();
+                
+                if (part < 0.3) {
+                    positions[idx * 3] = chairX + (Math.random() - 0.5) * seatWidth;
+                    positions[idx * 3 + 1] = seatY + (Math.random() - 0.5) * 2;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * seatDepth;
+                } else if (part < 0.55) {
+                    const backX = chairX + seatWidth * 0.4;
+                    positions[idx * 3] = backX + (Math.random() - 0.5) * 3;
+                    positions[idx * 3 + 1] = seatY + Math.random() * backHeight;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * seatDepth;
+                } else if (part < 0.7) {
+                    const legX = chairX - seatWidth * 0.35;
+                    positions[idx * 3] = legX + (Math.random() - 0.5) * 2;
+                    positions[idx * 3 + 1] = -25 + Math.random() * 17;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * 2;
+                } else if (part < 0.85) {
+                    const legX = chairX + seatWidth * 0.35;
+                    positions[idx * 3] = legX + (Math.random() - 0.5) * 2;
+                    positions[idx * 3 + 1] = -25 + Math.random() * 17;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * 2;
+                } else {
+                    const backX = chairX + seatWidth * 0.4;
+                    const topY = seatY + backHeight;
+                    positions[idx * 3] = backX + (Math.random() - 0.5) * 4;
+                    positions[idx * 3 + 1] = topY + (Math.random() - 0.5) * 3;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * seatDepth;
+                }
+                idx++;
+            }
+            
+            for (; idx < PARTICLE_COUNT; idx++) {
+                const t = Math.random();
+                if (t < 0.6) {
+                    positions[idx * 3] = (Math.random() - 0.5) * 120;
+                    positions[idx * 3 + 1] = -25 + (Math.random() - 0.5) * 2;
+                    positions[idx * 3 + 2] = (Math.random() - 0.5) * 15;
+                } else {
+                    positions[idx * 3] = (Math.random() - 0.5) * 100;
+                    positions[idx * 3 + 1] = (Math.random() - 0.5) * 60;
+                    positions[idx * 3 + 2] = -15 + Math.random() * 10;
+                }
+            }
+
+            return positions;
+        }
+
+        function generateFilmPositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const t = Math.random();
+                
+                if (t < 0.4) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = 22 + (Math.random() - 0.5) * 6;
+                    
+                    positions[i * 3] = Math.cos(angle) * r;
+                    positions[i * 3 + 1] = Math.sin(angle) * r;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                } else if (t < 0.55) {
+                    const holeNum = Math.floor(Math.random() * 8);
+                    const holeAngle = (holeNum / 8) * Math.PI * 2;
+                    const holeR = 12;
+                    
+                    const localAngle = Math.random() * Math.PI * 2;
+                    const localR = 2 + Math.random() * 2;
+                    
+                    positions[i * 3] = Math.cos(holeAngle) * holeR + Math.cos(localAngle) * localR;
+                    positions[i * 3 + 1] = Math.sin(holeAngle) * holeR + Math.sin(localAngle) * localR;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+                } else if (t < 0.7) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = Math.random() * 5;
+                    
+                    positions[i * 3] = Math.cos(angle) * r;
+                    positions[i * 3 + 1] = Math.sin(angle) * r;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
+                } else {
+                    const stripPos = Math.random();
+                    const wave = Math.sin(stripPos * Math.PI * 4) * 5;
+                    
+                    positions[i * 3] = 30 + stripPos * 40;
+                    positions[i * 3 + 1] = wave + (Math.random() - 0.5) * 8;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 3;
+                }
+            }
+
+            return positions;
+        }
+
+        function generatePhoenixPositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const t = Math.random();
+                
+                if (t < 0.25) {
+                    const bodyT = Math.random();
+                    const bodyWidth = Math.sin(bodyT * Math.PI) * 8;
+                    
+                    positions[i * 3] = (Math.random() - 0.5) * bodyWidth;
+                    positions[i * 3 + 1] = -20 + bodyT * 50;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
+                } else if (t < 0.5) {
+                    const wingT = Math.random();
+                    const side = Math.random() < 0.5 ? -1 : 1;
+                    const wingSpread = 15 + wingT * 35;
+                    const wingHeight = 10 - Math.pow(wingT, 1.5) * 25;
+                    
+                    positions[i * 3] = side * wingSpread + (Math.random() - 0.5) * 5;
+                    positions[i * 3 + 1] = wingHeight + (Math.random() - 0.5) * 8;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 5;
+                } else if (t < 0.7) {
+                    const crownAngle = Math.random() * Math.PI * 2;
+                    const crownR = Math.random() * 6;
+                    
+                    positions[i * 3] = Math.cos(crownAngle) * crownR;
+                    positions[i * 3 + 1] = 28 + Math.random() * 10;
+                    positions[i * 3 + 2] = Math.sin(crownAngle) * crownR * 0.3;
+                } else {
+                    const burstAngle = Math.random() * Math.PI * 2;
+                    const burstR = 30 + Math.random() * 30;
+                    const burstY = (Math.random() - 0.3) * 60;
+                    
+                    positions[i * 3] = Math.cos(burstAngle) * burstR;
+                    positions[i * 3 + 1] = burstY;
+                    positions[i * 3 + 2] = Math.sin(burstAngle) * burstR * 0.4;
+                }
+            }
+
+            return positions;
+        }
+
+        function generateLogoPositions() {
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const t = i / PARTICLE_COUNT;
+                const spiralAngle = t * Math.PI * 8;
+                const spiralRadius = (1 - t) * 50 + Math.random() * 10;
+                
+                positions[i * 3] = Math.cos(spiralAngle) * spiralRadius;
+                positions[i * 3 + 1] = Math.sin(spiralAngle) * spiralRadius * 0.6 + (Math.random() - 0.5) * 10;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 20;
+            }
+
+            return positions;
+        }
+
+        function setParticlePositions(stage) {
+            switch(stage) {
+                case 'trees':
+                    targetPositions = generateTreePositions();
+                    break;
+                case 'scroll':
+                    targetPositions = generateScrollPositions();
+                    break;
+                case 'spiral':
+                    targetPositions = generateSpiralPositions();
+                    break;
+                case 'circle':
+                    targetPositions = generateCirclePositions();
+                    break;
+                case 'film':
+                    targetPositions = generateFilmPositions();
+                    break;
+                case 'phoenix':
+                    targetPositions = generatePhoenixPositions();
+                    break;
+                case 'logo':
+                    targetPositions = generateLogoPositions();
+                    break;
+            }
+            currentStage = stage;
+        }
+
+        function updateStageText(stage, stepIndex = -1) {
+            const textEl = document.getElementById('heroStageText');
+            const introEl = document.getElementById('heroIntroText');
+            const numberEl = document.getElementById('heroStepNumber');
+            const titleEl = document.getElementById('heroStepTitle');
+            const descEl = document.getElementById('heroStepDesc');
+
+            if (stage === 'trees') {
+                textEl.classList.remove('visible');
+                introEl.classList.add('visible');
+            } else if (stepIndex >= 0 && stepIndex < STORYTELLING_STEPS.length) {
+                introEl.classList.remove('visible');
+                const step = STORYTELLING_STEPS[stepIndex];
+                numberEl.textContent = step.number;
+                titleEl.textContent = step.title;
+                descEl.textContent = step.desc;
+                textEl.classList.add('visible');
+            } else {
+                textEl.classList.remove('visible');
+                introEl.classList.remove('visible');
+            }
+        }
+
+        function startExperience() {
+            currentStage = 'trees';
+            stageStartTime = Date.now();
+            updateStageText('trees');
+
+            const shapes = ['scroll', 'spiral', 'circle', 'film', 'phoenix'];
+            // Trees stage lasts 3 seconds longer (STAGE_DURATION + 3000)
+            let delay = STAGE_DURATION + 3000;
+
+            shapes.forEach((shape, index) => {
+                setTimeout(() => {
+                    setParticlePositions(shape);
+                    updateStageText(shape, index);
+                    stageStartTime = Date.now();
+                }, delay);
+                delay += STAGE_DURATION;
+            });
+
+            // After all steps, reset to trees
+            setTimeout(() => {
+                const alphas = particles.geometry.attributes.alpha.array;
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    alphas[i] = 0;
+                }
+                particles.geometry.attributes.alpha.needsUpdate = true;
+                
+                setParticlePositions('trees');
+                
+                setTimeout(() => startExperience(), 1000);
+            }, delay + 3000);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.016;
+
+            if (particles) {
+                const positions = particles.geometry.attributes.position.array;
+                const alphas = particles.geometry.attributes.alpha.array;
+
+                const lerpSpeed = 0.025;
+                for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
+                    positions[i] += (targetPositions[i] - positions[i]) * lerpSpeed;
+                }
+
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const idx = i * 3;
+                    positions[idx + 1] += Math.sin(time * 1.5 + i * 0.03) * 0.015;
+                }
+
+                const targetAlpha = currentStage === 'logo' ? 0.4 : 0.85;
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    alphas[i] += (targetAlpha - alphas[i]) * 0.02;
+                }
+
+                particles.geometry.attributes.position.needsUpdate = true;
+                particles.geometry.attributes.alpha.needsUpdate = true;
+                particles.material.uniforms.time.value = time;
+
+                if (currentStage === 'spiral') {
+                    particles.rotation.y += 0.003;
+                } else if (currentStage === 'film') {
+                    particles.rotation.z += 0.002;
+                } else if (currentStage === 'phoenix') {
+                    particles.rotation.y += 0.001;
+                } else if (currentStage === 'logo') {
+                    particles.rotation.y += 0.004;
+                } else {
+                    particles.rotation.y *= 0.98;
+                    particles.rotation.z *= 0.98;
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('hero-canvas-container');
+            if (!container || !renderer) return;
+            
+            // Right-aligned: use 60% of viewport width
+            const canvasWidth = Math.floor(window.innerWidth * 0.6);
+            const canvasHeight = window.innerHeight;
+            
+            camera.aspect = canvasWidth / canvasHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(canvasWidth, canvasHeight);
+            
+            if (particles) {
+                particles.material.uniforms.pixelRatio.value = Math.min(window.devicePixelRatio, 2);
+            }
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHeroAnimation);
+        } else {
+            initHeroAnimation();
+        }
+    </script>
     
     <!-- JavaScript for Contact Panel -->
     <script>
