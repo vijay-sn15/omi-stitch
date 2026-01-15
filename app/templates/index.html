@@ -539,18 +539,37 @@
                 display: none !important;
             }
 
-            /* Header: tighter padding */
+            /* Header: tighter padding and relative for menu positioning */
             header {
                 padding: 12px 16px !important;
+                position: relative !important;
             }
 
-            /* Hide desktop nav on mobile */
-            header nav {
+            /* Hide desktop nav on mobile - be very specific */
+            header nav.desktop-nav,
+            header > nav,
+            .desktop-nav {
                 display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
             }
 
             /* Show mobile menu button */
             #mobileMenuButton {
+                display: flex !important;
+            }
+
+            /* Position mobile menu correctly */
+            #mobileMenu {
+                position: fixed !important;
+                top: 60px !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 9999 !important;
+            }
+            
+            #mobileMenu:not(.hidden) {
                 display: flex !important;
             }
 
@@ -785,12 +804,12 @@
                 </button>
             </div>
         </header>
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden flex-col bg-black/90 backdrop-blur-lg border-b border-white/10 px-6 py-6 space-y-4 absolute top-full left-0 w-full z-[100]">
-            <a class="text-white/90 text-lg font-semibold border-b border-white/5 pb-2" href="#">About</a>
-            <a class="text-white/90 text-lg font-semibold border-b border-white/5 pb-2" href="#storytelling">Storytelling</a>
-            <a class="text-white/90 text-lg font-semibold border-b border-white/5 pb-2" href="#">Wellness</a>
-            <a class="text-white/90 text-lg font-semibold border-b border-white/5 pb-2" href="#">Sustainability</a>
+        <!-- Mobile Menu (hidden by default, shown via JS toggle) -->
+        <div id="mobileMenu" class="hidden bg-black/95 backdrop-blur-xl border-b border-white/10 px-6 py-4 z-[9999]" style="display: none;">
+            <a class="block text-white text-lg font-medium py-3 border-b border-white/10" href="#">About</a>
+            <a class="block text-white text-lg font-medium py-3 border-b border-white/10" href="#storytelling">Storytelling</a>
+            <a class="block text-white text-lg font-medium py-3 border-b border-white/10" href="#">Wellness</a>
+            <a class="block text-white text-lg font-medium py-3" href="#">Sustainability</a>
         </div>
         <!-- Main Hero Content -->
         <main class="relative z-20 flex-1 flex flex-col justify-center px-10 md:px-24 max-w-7xl">
@@ -1992,10 +2011,20 @@
             const menu = document.getElementById('mobileMenu');
             if (menuBtn && menu) {
                 menuBtn.addEventListener('click', () => {
-                    menu.classList.toggle('hidden');
+                    const isHidden = menu.classList.contains('hidden');
+                    if (isHidden) {
+                        menu.classList.remove('hidden');
+                        menu.style.display = 'block';
+                    } else {
+                        menu.classList.add('hidden');
+                        menu.style.display = 'none';
+                    }
                 });
                 menu.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => menu.classList.add('hidden'));
+                    link.addEventListener('click', () => {
+                        menu.classList.add('hidden');
+                        menu.style.display = 'none';
+                    });
                 });
             }
         });
