@@ -1015,9 +1015,12 @@
                 number: "STEP FIVE",
                 title: "Final Agreement",
                 desc: "Partnership commences in the OMI ecosystem",
-                shape: "phoenix"
+                shape: "imageLogo"
             }
         ];
+
+        // Store logo image positions
+        let logoImagePositions = null;
 
         // Gold color palette
         const GOLD_COLORS = [
@@ -1100,6 +1103,9 @@
 
                 window.addEventListener('resize', onWindowResize);
                 animate();
+
+                // Pre-load logo image for final step
+                loadLogoImage();
 
                 // Start with trees
                 setTimeout(startExperience, 500);
@@ -1482,6 +1488,77 @@
             return positions;
         }
 
+        // Load and process logo image for particle positions
+        async function loadLogoImage() {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    // Create offscreen canvas to sample pixels
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Scale down for sampling (smaller = faster, fewer points)
+                    const sampleSize = 150;
+                    const aspectRatio = img.width / img.height;
+                    canvas.width = sampleSize;
+                    canvas.height = Math.floor(sampleSize / aspectRatio);
+                    
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pixels = imageData.data;
+                    
+                    // Extract non-transparent pixel positions
+                    const validPositions = [];
+                    for (let y = 0; y < canvas.height; y++) {
+                        for (let x = 0; x < canvas.width; x++) {
+                            const i = (y * canvas.width + x) * 4;
+                            const alpha = pixels[i + 3];
+                            // Only include pixels with significant opacity
+                            if (alpha > 100) {
+                                validPositions.push({
+                                    x: (x / canvas.width - 0.5) * 100, // Scale to world coords
+                                    y: -(y / canvas.height - 0.5) * 100 / aspectRatio // Flip Y
+                                });
+                            }
+                        }
+                    }
+                    
+                    // Generate positions for all particles
+                    const positions = new Float32Array(PARTICLE_COUNT * 3);
+                    for (let i = 0; i < PARTICLE_COUNT; i++) {
+                        if (validPositions.length > 0) {
+                            const pos = validPositions[Math.floor(Math.random() * validPositions.length)];
+                            positions[i * 3] = pos.x + (Math.random() - 0.5) * 2;
+                            positions[i * 3 + 1] = pos.y + (Math.random() - 0.5) * 2;
+                            positions[i * 3 + 2] = (Math.random() - 0.5) * 10 - 20;
+                        } else {
+                            // Fallback if no valid positions
+                            positions[i * 3] = (Math.random() - 0.5) * 100;
+                            positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+                            positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 20;
+                        }
+                    }
+                    
+                    logoImagePositions = positions;
+                    resolve(positions);
+                };
+                img.onerror = () => {
+                    console.warn('Failed to load logo image, using fallback');
+                    resolve(generateLogoPositions());
+                };
+                img.src = '/static/images/omi-logo-transparent-graphic.png';
+            });
+        }
+
+        function generateImageLogoPositions() {
+            if (logoImagePositions) {
+                return logoImagePositions;
+            }
+            // Fallback if image not loaded yet
+            return generateLogoPositions();
+        }
+
         function setParticlePositions(stage) {
             switch(stage) {
                 case 'trees':
@@ -1504,6 +1581,9 @@
                     break;
                 case 'logo':
                     targetPositions = generateLogoPositions();
+                    break;
+                case 'imageLogo':
+                    targetPositions = generateImageLogoPositions();
                     break;
             }
             currentStage = stage;
@@ -1537,7 +1617,7 @@
             stageStartTime = Date.now();
             updateStageText('trees');
 
-            const shapes = ['scroll', 'spiral', 'circle', 'film', 'phoenix'];
+            const shapes = ['scroll', 'spiral', 'circle', 'film', 'imageLogo'];
             // Trees stage lasts 3 seconds longer (STAGE_DURATION + 3000)
             let delay = STAGE_DURATION + 3000;
 
@@ -1550,7 +1630,7 @@
                 delay += STAGE_DURATION;
             });
 
-            // After all steps, reset to trees
+            // After all steps (including logo), reset to trees
             setTimeout(() => {
                 const alphas = particles.geometry.attributes.alpha.array;
                 for (let i = 0; i < PARTICLE_COUNT; i++) {
