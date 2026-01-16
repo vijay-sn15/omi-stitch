@@ -87,7 +87,7 @@
             background: radial-gradient(circle, rgba(244, 237, 225, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
         }
         .step-node {
-            background: white;
+            background: #2d3748; /* Dark gray background */
             border: 1px solid rgba(180, 148, 30, 0.2);
             box-shadow: 0 4px 20px rgba(0,0,0,0.03);
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
@@ -117,20 +117,26 @@
         
         /* Fixed Logo (top left when main logo is out of view) */
         .fixed-logo {
-            left: 2.5rem; /* px-10 = 2.5rem, aligns with main logo on mobile */
+            left: 1.5rem; /* px-6 = 1.5rem, aligns with step node section on mobile */
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
         
         @media (min-width: 768px) {
             .fixed-logo {
-                left: 6rem; /* px-24 = 6rem, aligns with main logo on desktop */
+                left: calc((100% - 1400px) / 2 + 1.5rem); /* Aligns with first step node circle - container center + px-6 padding */
+            }
+        }
+        
+        @media (min-width: 1536px) {
+            .fixed-logo {
+                left: calc((100vw - 1400px) / 2 + 1.5rem); /* Use viewport width for larger screens */
             }
         }
         
         .fixed-logo-circle {
             width: 120px;
             height: 120px;
-            background-color: #000000; /* Solid black background */
+            background-color: #2d3748; /* Dark gray background - same as step node */
             /* Perfect circle - width and height are equal */
         }
         
@@ -941,7 +947,7 @@
         
         <!-- Fixed Logo (shown when main logo is out of view) -->
         <div id="fixedLogo" class="fixed-logo hidden fixed top-4 z-[100]">
-            <div class="fixed-logo-circle rounded-full bg-black/90 backdrop-blur-sm border border-white/10 flex items-center justify-center shadow-lg">
+            <div class="fixed-logo-circle rounded-full backdrop-blur-sm border border-white/10 flex items-center justify-center shadow-lg">
                 <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="fixed-logo-image"/>
             </div>
         </div>
@@ -1026,7 +1032,7 @@
                     <h1 class="text-[#111813] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight @[480px]:text-5xl">
                         Our Pillars
                     </h1>
-                    <p class="text-[#63886f] dark:text-white/60 text-lg font-normal leading-normal max-w-[720px]">
+                    <p class="text-[#2d3748] dark:text-white/60 text-lg font-normal leading-normal max-w-[720px]">
                         Everything we create is anchored in three core focuses that drive human connection and ecological harmony.
                     </p>
                 </div>
@@ -1038,7 +1044,7 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <h2 class="text-[#111813] dark:text-white text-xl font-bold">Storytelling</h2>
-                            <p class="text-[#63886f] dark:text-white/60 text-base leading-relaxed">
+                            <p class="text-[#2d3748] dark:text-white/60 text-base leading-relaxed">
                                 Narratives that move the soul and challenge the conventional boundaries of digital media.
                             </p>
                         </div>
@@ -1050,7 +1056,7 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <h2 class="text-[#111813] dark:text-white text-xl font-bold">Wellness</h2>
-                            <p class="text-[#63886f] dark:text-white/60 text-base leading-relaxed">
+                            <p class="text-[#2d3748] dark:text-white/60 text-base leading-relaxed">
                                 Holistic practices and environments designed to nourish the mind and restore inner balance.
                             </p>
                         </div>
@@ -1062,7 +1068,7 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <h2 class="text-[#111813] dark:text-white text-xl font-bold">Sustainability</h2>
-                            <p class="text-[#63886f] dark:text-white/60 text-base leading-relaxed">
+                            <p class="text-[#2d3748] dark:text-white/60 text-base leading-relaxed">
                                 Building a greener future by integrating nature directly into our creative workflows.
                             </p>
                         </div>
@@ -1079,7 +1085,7 @@
             </p>
             <div class="mt-8 flex justify-center items-center gap-4">
                 <div class="w-10 h-px bg-primary/40"></div>
-                <span class="text-sm font-bold uppercase tracking-widest text-[#63886f]">The OMI Philosophy</span>
+                <span class="text-sm font-bold uppercase tracking-widest text-[#2d3748]">The OMI Philosophy</span>
                 <div class="w-10 h-px bg-primary/40"></div>
             </div>
         </div>
@@ -1196,9 +1202,7 @@
         <div class="py-24 px-6 bg-[#faf9f6] dark:bg-white/5 border-y border-black/5 dark:border-white/10">
             <div class="max-w-4xl mx-auto text-center">
                 <div class="mb-10 inline-block">
-                    <div class="opacity-60">
-                        <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="w-24 h-auto mx-auto" />
-                    </div>
+                    <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="w-24 h-auto mx-auto" />
                 </div>
                 <h2 class="text-[#2D2D2D] dark:text-white text-4xl md:text-5xl font-bold mb-6 tracking-tight">Ready to Begin?</h2>
                 <p class="text-[#3A3428] dark:text-white/60 text-lg font-normal mb-12 max-w-xl mx-auto leading-relaxed opacity-90">
@@ -1220,24 +1224,24 @@
                     <span class="font-extrabold text-xl tracking-tighter">OMI</span>
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-8">
-                    <a class="text-[#63886f] dark:text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                    <a class="text-[#63886f] dark:text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Terms of Service</a>
-                    <a class="text-[#63886f] dark:text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Press Kit</a>
+                    <a class="text-[#2d3748] dark:text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                    <a class="text-[#2d3748] dark:text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Terms of Service</a>
+                    <a class="text-[#2d3748] dark:text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Press Kit</a>
                 </div>
                 <div class="flex gap-4">
-                    <a class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-[#dce5df] dark:border-white/10 flex items-center justify-center hover:bg-primary transition-all text-[#63886f] dark:text-white/60 hover:text-white" href="#">
+                    <a class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-[#dce5df] dark:border-white/10 flex items-center justify-center hover:bg-primary transition-all text-[#2d3748] dark:text-white/60 hover:text-white" href="#">
                         <span class="material-symbols-outlined !text-xl">language</span>
                     </a>
-                    <a class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-[#dce5df] dark:border-white/10 flex items-center justify-center hover:bg-primary transition-all text-[#63886f] dark:text-white/60 hover:text-white" href="#">
+                    <a class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-[#dce5df] dark:border-white/10 flex items-center justify-center hover:bg-primary transition-all text-[#2d3748] dark:text-white/60 hover:text-white" href="#">
                         <span class="material-symbols-outlined !text-xl">alternate_email</span>
                     </a>
-                    <a class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-[#dce5df] dark:border-white/10 flex items-center justify-center hover:bg-primary transition-all text-[#63886f] dark:text-white/60 hover:text-white" href="#">
+                    <a class="w-10 h-10 rounded-full bg-white dark:bg-white/5 border border-[#dce5df] dark:border-white/10 flex items-center justify-center hover:bg-primary transition-all text-[#2d3748] dark:text-white/60 hover:text-white" href="#">
                         <span class="material-symbols-outlined !text-xl">share</span>
                     </a>
                 </div>
             </div>
-            <p class="text-[#63886f] dark:text-white/40 text-sm text-center">
-                © 2024 OMI Hub. Consciously created for a better tomorrow.
+            <p class="text-[#2d3748] dark:text-white/40 text-sm text-center">
+                © 2025 OMI Group. Consciously created for a better tomorrow.
             </p>
         </div>
     </footer>
@@ -1990,7 +1994,7 @@
 
         // Normalize positions to match trees animation scale and bottom position
         // For non-trees steps, use increased height to be proportional to width
-        function normalizePositions(positions, isTreesStep = false) {
+        function normalizePositions(positions, isTreesStep = false, scale = { x: 1, y: 1, z: 1 }) {
             // Trees animation reference:
             // Y range: -28 (bottom) to ~22 (top) = ~50 units height
             // X range: roughly -70 to 70 = ~140 units width
@@ -2019,12 +2023,14 @@
             const rangeY = maxY - minY || 1;
             const rangeZ = maxZ - minZ || 1;
             
+            const isMobile = window.innerWidth <= 768;
+            
             // Target ranges
-            const targetRangeX = 140;
-            // Trees: 50 units height, Other steps: 100 units height (more proportional to 140 width)
-            const targetRangeY = isTreesStep ? 50 : 100;
-            const targetRangeZ = 50;
-            const targetBottomY = -28;
+            const targetRangeX = (isTreesStep ? 140 : (isMobile ? 140 : 110)) * scale.x;
+            // Trees: 50 units height, Other steps: smaller on desktop for clarity
+            const targetRangeY = (isTreesStep ? 50 : (isMobile ? 100 : 70)) * scale.y;
+            const targetRangeZ = (isTreesStep ? 50 : (isMobile ? 50 : 40)) * scale.z;
+            const targetBottomY = isTreesStep ? -28 : (isMobile ? -28 : -30);
             
             // Normalize and scale
             for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -2043,6 +2049,7 @@
         }
 
         function setParticlePositions(stage) {
+            const isMobile = window.innerWidth <= 768;
             let positions;
             switch(stage) {
                 case 'trees':
@@ -2050,31 +2057,32 @@
                     break;
                 case 'scroll':
                     positions = generateScrollPositions();
-                    targetPositions = normalizePositions(positions, false);
+                    // Only normalize on mobile; desktop uses original positions
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
                 case 'spiral':
                     positions = generateSpiralPositions();
-                    targetPositions = normalizePositions(positions, false);
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
                 case 'circle':
                     positions = generateCirclePositions();
-                    targetPositions = normalizePositions(positions, false);
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
                 case 'film':
                     positions = generateFilmPositions();
-                    targetPositions = normalizePositions(positions, false);
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
                 case 'phoenix':
                     positions = generatePhoenixPositions();
-                    targetPositions = normalizePositions(positions, false);
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
                 case 'logo':
                     positions = generateLogoPositions();
-                    targetPositions = normalizePositions(positions, false);
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
                 case 'imageLogo':
                     positions = generateImageLogoPositions();
-                    targetPositions = normalizePositions(positions, false);
+                    targetPositions = isMobile ? normalizePositions(positions, false) : positions;
                     break;
             }
             currentStage = stage;
