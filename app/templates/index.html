@@ -992,8 +992,41 @@
                 <div class="h-1 w-16 gold-bg mt-6"></div>
             </div>
             
-            <!-- Form -->
-            <form id="projectForm" class="space-y-8">
+            <!-- Form - novalidate disables browser tooltips, we use custom validation -->
+            <form id="projectForm" class="space-y-8" novalidate>
+                <!-- Contact Information Section -->
+                <section class="glass-form p-6 rounded-2xl">
+                    <h3 class="text-lg font-bold mb-5 flex items-center gap-2 text-white">
+                        <span class="material-symbols-outlined gold-accent">person</span>
+                        Contact Information
+                    </h3>
+                    <div class="space-y-5">
+                        <div>
+                            <label for="contact_name" class="block text-xs font-semibold gold-accent uppercase tracking-widest mb-2">
+                                Full Name <span class="text-red-400">*</span>
+                            </label>
+                            <input class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 gold-ring focus:outline-none focus:ring-2" id="contact_name" name="contact_name" placeholder="Your full name" type="text" required/>
+                        </div>
+                        <div>
+                            <label for="contact_email" class="block text-xs font-semibold gold-accent uppercase tracking-widest mb-2">
+                                Email Address <span class="text-red-400">*</span>
+                            </label>
+                            <input class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 gold-ring focus:outline-none focus:ring-2" id="contact_email" name="contact_email" placeholder="your.email@example.com" type="email" required/>
+                            <p class="text-white/40 text-xs mt-1">Please enter a valid email address</p>
+                        </div>
+                        <div>
+                            <label for="contact_phone" class="block text-xs font-semibold gold-accent uppercase tracking-widest mb-2">
+                                Phone Number (India) <span class="text-red-400">*</span>
+                            </label>
+                            <div class="flex items-stretch w-full bg-white/5 border border-white/10 rounded-lg gold-ring focus-within:outline-none focus-within:ring-2">
+                                <span class="inline-flex items-center px-4 text-white/60 border-r border-white/10 flex-shrink-0">+91</span>
+                                <input class="flex-1 min-w-0 bg-transparent px-4 py-3 text-white placeholder-white/30 focus:outline-none" id="contact_phone" name="contact_phone" placeholder="9876543210" type="tel" required pattern="[6-9][0-9]{9}" maxlength="10"/>
+                            </div>
+                            <p class="text-white/40 text-xs mt-1">Enter 10-digit Indian mobile number (starting with 6-9)</p>
+                        </div>
+                    </div>
+                </section>
+                
                 <!-- Core Narrative Section -->
                 <section class="glass-form p-6 rounded-2xl">
                     <h3 class="text-lg font-bold mb-5 flex items-center gap-2 text-white">
@@ -2614,6 +2647,285 @@
     
     <!-- JavaScript for Contact Panel -->
     <script>
+        // ========================================
+        // Toast Notification System
+        // ========================================
+        
+        const Toast = {
+            container: null,
+            
+            init() {
+                if (this.container) return;
+                this.container = document.createElement('div');
+                this.container.className = 'toast-container';
+                this.container.id = 'toastContainer';
+                document.body.appendChild(this.container);
+            },
+            
+            show(type, title, message, duration = 5000) {
+                this.init();
+                
+                const icons = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.innerHTML = `
+                    <div class="toast-icon">
+                        <span class="material-symbols-outlined">${icons[type] || 'info'}</span>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                    <div class="toast-progress"></div>
+                `;
+                
+                this.container.appendChild(toast);
+                
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    toast.classList.add('show');
+                });
+                
+                // Auto dismiss
+                if (duration > 0) {
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        toast.classList.add('hide');
+                        setTimeout(() => toast.remove(), 400);
+                    }, duration);
+                }
+                
+                return toast;
+            },
+            
+            success(title, message, duration) {
+                return this.show('success', title, message, duration);
+            },
+            
+            error(title, message, duration) {
+                return this.show('error', title, message, duration);
+            },
+            
+            warning(title, message, duration) {
+                return this.show('warning', title, message, duration);
+            },
+            
+            info(title, message, duration) {
+                return this.show('info', title, message, duration);
+            }
+        };
+        
+        // ========================================
+        // Form Validation System
+        // ========================================
+        
+        const FormValidator = {
+            rules: {
+                contact_name: {
+                    required: true,
+                    minLength: 2,
+                    message: 'Please enter your full name (at least 2 characters)'
+                },
+                contact_email: {
+                    required: true,
+                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Please enter a valid email address'
+                },
+                contact_phone: {
+                    required: true,
+                    pattern: /^[6-9][0-9]{9}$/,
+                    message: 'Please enter a valid 10-digit Indian mobile number starting with 6-9'
+                }
+            },
+            
+            validateField(input) {
+                const name = input.name;
+                const value = input.value.trim();
+                const rule = this.rules[name];
+                
+                // Remove previous validation classes
+                input.classList.remove('valid', 'invalid');
+                
+                // Hide previous error/success messages
+                const wrapper = this.getFieldWrapper(input);
+                const errorEl = wrapper.querySelector('.field-error');
+                const successEl = wrapper.querySelector('.field-success');
+                if (errorEl) errorEl.classList.remove('show');
+                if (successEl) successEl.classList.remove('show');
+                
+                // If no rule defined, skip validation
+                if (!rule) return { valid: true };
+                
+                // Check required
+                if (rule.required && !value) {
+                    this.showError(input, rule.message || 'This field is required');
+                    return { valid: false, message: rule.message };
+                }
+                
+                // Check min length
+                if (rule.minLength && value.length < rule.minLength) {
+                    this.showError(input, rule.message);
+                    return { valid: false, message: rule.message };
+                }
+                
+                // Check pattern
+                if (rule.pattern && value && !rule.pattern.test(value)) {
+                    this.showError(input, rule.message);
+                    return { valid: false, message: rule.message };
+                }
+                
+                // Valid
+                if (value) {
+                    this.showSuccess(input);
+                }
+                
+                return { valid: true };
+            },
+            
+            // Get the field wrapper (the div containing the label)
+            getFieldWrapper(input) {
+                let parent = input.parentElement;
+                // Traverse up to find the div that contains a label
+                while (parent && !parent.querySelector('label')) {
+                    parent = parent.parentElement;
+                }
+                return parent || input.parentElement;
+            },
+            
+            showError(input, message) {
+                input.classList.add('invalid');
+                input.classList.remove('valid');
+                
+                const wrapper = this.getFieldWrapper(input);
+                let errorEl = wrapper.querySelector('.field-error');
+                if (!errorEl) {
+                    errorEl = document.createElement('div');
+                    errorEl.className = 'field-error';
+                    errorEl.innerHTML = `<span class="material-symbols-outlined">error</span><span class="error-text"></span>`;
+                    wrapper.appendChild(errorEl);
+                }
+                errorEl.querySelector('.error-text').textContent = message;
+                errorEl.classList.add('show');
+            },
+            
+            showSuccess(input) {
+                input.classList.add('valid');
+                input.classList.remove('invalid');
+                
+                const wrapper = this.getFieldWrapper(input);
+                const errorEl = wrapper.querySelector('.field-error');
+                if (errorEl) errorEl.classList.remove('show');
+            },
+            
+            validateForm(form) {
+                let isValid = true;
+                let firstInvalid = null;
+                
+                const inputs = form.querySelectorAll('input[required], textarea[required]');
+                inputs.forEach(input => {
+                    const result = this.validateField(input);
+                    if (!result.valid) {
+                        isValid = false;
+                        if (!firstInvalid) firstInvalid = input;
+                    }
+                });
+                
+                // Focus on first invalid field
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                return isValid;
+            }
+        };
+        
+        // ========================================
+        // Local Storage for Form Data
+        // ========================================
+        
+        const FORM_STORAGE_KEY = 'omi_project_form_data';
+        
+        function saveFormToLocalStorage() {
+            const form = document.getElementById('projectForm');
+            if (!form) return;
+            
+            const formData = {};
+            const elements = form.elements;
+            
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i];
+                if (!element.name || element.type === 'submit' || element.type === 'button') continue;
+                
+                if (element.type === 'checkbox') {
+                    formData[element.name] = element.checked;
+                } else if (element.type === 'radio') {
+                    if (element.checked) {
+                        formData[element.name] = element.value;
+                    }
+                } else {
+                    formData[element.name] = element.value;
+                }
+            }
+            
+            try {
+                localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formData));
+            } catch (e) {
+                console.warn('Failed to save form data to localStorage:', e);
+            }
+        }
+        
+        function loadFormFromLocalStorage() {
+            const form = document.getElementById('projectForm');
+            if (!form) return;
+            
+            try {
+                const savedData = localStorage.getItem(FORM_STORAGE_KEY);
+                if (!savedData) return;
+                
+                const formData = JSON.parse(savedData);
+                
+                for (const [fieldName, value] of Object.entries(formData)) {
+                    const element = form.elements[fieldName];
+                    if (!element) continue;
+                    
+                    if (element.type === 'checkbox') {
+                        element.checked = Boolean(value);
+                    } else if (element.type === 'radio') {
+                        const radio = form.querySelector(`input[name="${fieldName}"][value="${value}"]`);
+                        if (radio) radio.checked = true;
+                    } else {
+                        element.value = value || '';
+                    }
+                }
+                
+                Toast.info('Form Restored', 'Your previous form data has been restored.');
+            } catch (e) {
+                console.warn('Failed to load form data from localStorage:', e);
+            }
+        }
+        
+        function clearFormLocalStorage() {
+            try {
+                localStorage.removeItem(FORM_STORAGE_KEY);
+            } catch (e) {
+                console.warn('Failed to clear form data from localStorage:', e);
+            }
+        }
+        
+        // ========================================
+        // Contact Panel Functions
+        // ========================================
+        
         function openContactPanel() {
             document.getElementById('contactPanel').classList.add('open');
             document.getElementById('contactOverlay').classList.add('open');
@@ -2633,12 +2945,69 @@
             }
         });
         
-        // Handle form submission
+        // ========================================
+        // Form Initialization
+        // ========================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('projectForm');
+            if (!form) return;
+            
+            // Initialize Toast system
+            Toast.init();
+            
+            // Load saved form data from local storage
+            loadFormFromLocalStorage();
+            
+            // Save form data on every input change
+            form.addEventListener('input', saveFormToLocalStorage);
+            form.addEventListener('change', saveFormToLocalStorage);
+            
+            // Add real-time validation on blur for required fields
+            const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
+            requiredInputs.forEach(input => {
+                input.addEventListener('blur', () => {
+                    FormValidator.validateField(input);
+                });
+                
+                // Clear error state when user starts typing
+                input.addEventListener('input', () => {
+                    if (input.classList.contains('invalid')) {
+                        input.classList.remove('invalid');
+                        const wrapper = FormValidator.getFieldWrapper(input);
+                        const errorEl = wrapper.querySelector('.field-error');
+                        if (errorEl) errorEl.classList.remove('show');
+                    }
+                });
+            });
+        });
+        
+        // ========================================
+        // Form Submission Handler
+        // ========================================
+        
         document.getElementById('projectForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
+            const form = this;
+            
+            // Validate form before submission
+            if (!FormValidator.validateForm(form)) {
+                Toast.error('Validation Error', 'Please fix the highlighted fields before submitting.');
+                return;
+            }
+            
+            const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
+            
+            // Show loading state
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton ? submitButton.innerHTML : '';
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.classList.add('btn-loading');
+                submitButton.innerHTML = '<span class="btn-text">' + originalButtonText + '</span>';
+            }
             
             try {
                 const response = await fetch('/api/v1/contact', {
@@ -2649,16 +3018,59 @@
                     body: JSON.stringify(data),
                 });
                 
-                if (response.ok) {
-                    alert('Thank you! Your project has been submitted successfully.');
-                    this.reset();
-                    closeContactPanel();
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    if (result.db_saved) {
+                        // Clear local storage only if database save was successful
+                        clearFormLocalStorage();
+                        
+                        Toast.success(
+                            'Project Submitted!',
+                            'Thank you! Your project has been submitted successfully. We will review it and get back to you soon.',
+                            6000
+                        );
+                        
+                        // Reset form and close panel after a short delay
+                        setTimeout(() => {
+                            form.reset();
+                            // Clear validation states
+                            form.querySelectorAll('.valid, .invalid').forEach(el => {
+                                el.classList.remove('valid', 'invalid');
+                            });
+                            form.querySelectorAll('.field-error, .field-success').forEach(el => {
+                                el.classList.remove('show');
+                            });
+                            closeContactPanel();
+                        }, 1500);
+                    } else {
+                        Toast.warning(
+                            'Partially Saved',
+                            'Your project was received but could not be saved to our database. Your data is preserved locally and will be resubmitted when you return.',
+                            8000
+                        );
+                    }
                 } else {
-                    alert('Something went wrong. Please try again.');
+                    Toast.error(
+                        'Submission Failed',
+                        result.detail || 'Something went wrong. Please try again. Your data has been saved locally.',
+                        6000
+                    );
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Something went wrong. Please try again.');
+                Toast.error(
+                    'Network Error',
+                    'Please check your internet connection and try again. Your data has been saved locally.',
+                    6000
+                );
+            } finally {
+                // Restore button state
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('btn-loading');
+                    submitButton.innerHTML = originalButtonText;
+                }
             }
         });
 
