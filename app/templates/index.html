@@ -117,32 +117,108 @@
         
         /* Fixed Logo (top left when main logo is out of view) */
         .fixed-logo {
-            left: 1.5rem; /* px-6 = 1.5rem, aligns with step node section on mobile */
+            left: 1rem; /* Closer to left edge on mobile */
             transition: opacity 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
         }
         
         @media (min-width: 768px) {
             .fixed-logo {
-                left: calc((100% - 1400px) / 2 + 1.5rem); /* Aligns with first step node circle - container center + px-6 padding */
+                left: 1.5rem; /* Closer to left edge on desktop */
             }
         }
         
-        @media (min-width: 1536px) {
-            .fixed-logo {
-                left: calc((100vw - 1400px) / 2 + 1.5rem); /* Use viewport width for larger screens */
+        .fixed-logo-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Pixie dust canvas wrapper */
+        .fixed-logo-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 150px;
+        }
+        
+        #pixieDustCanvas {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 3; /* Above the circle */
+        }
+        
+        .fixed-logo-arrow {
+            color: #B4941E; /* Solid gold color matching theme */
+            font-size: 2.5rem; /* Bigger */
+            font-weight: 900; /* Thicker */
+            animation: bounceUp 1s ease-in-out infinite;
+            margin-bottom: -30px; /* Much closer to circle */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 101;
+            -webkit-text-stroke: 1px #B4941E; /* Thicker stroke */
+        }
+        
+        @keyframes bounceUp {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
             }
         }
         
         .fixed-logo-circle {
-            width: 120px;
-            height: 120px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 72px;
+            height: 72px;
             background-color: #2d3748; /* Dark gray background - same as step node */
             /* Perfect circle - width and height are equal */
+            transition: box-shadow 0.2s ease;
+            box-shadow: 
+                0 0 15px rgba(180, 148, 30, 0.5),
+                0 0 30px rgba(180, 148, 30, 0.3),
+                0 0 45px rgba(180, 148, 30, 0.15);
+            animation: goldenGlow 2s ease-in-out infinite;
+            z-index: 2;
+        }
+        
+        @keyframes goldenGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 15px rgba(180, 148, 30, 0.5),
+                    0 0 30px rgba(180, 148, 30, 0.3),
+                    0 0 45px rgba(180, 148, 30, 0.15);
+            }
+            50% {
+                box-shadow: 
+                    0 0 20px rgba(180, 148, 30, 0.7),
+                    0 0 40px rgba(180, 148, 30, 0.5),
+                    0 0 60px rgba(180, 148, 30, 0.25);
+            }
+        }
+        
+        .fixed-logo:hover .fixed-logo-circle {
+            box-shadow: 
+                0 0 25px rgba(180, 148, 30, 0.8),
+                0 0 50px rgba(180, 148, 30, 0.5),
+                0 0 75px rgba(180, 148, 30, 0.3);
         }
         
         .fixed-logo-image {
-            width: 90px;
-            height: 90px;
+            width: 54px;
+            height: 54px;
             object-fit: contain; /* Maintain aspect ratio, no stretching */
             object-position: center;
         }
@@ -228,6 +304,104 @@
             50% {
                 transform: translate(-50%, -50%) scale(1.2);
                 opacity: 1;
+            }
+        }
+        
+        /* ===== Hero Manifesto Styles ===== */
+        .hero-manifesto {
+            position: relative;
+        }
+        
+        .hero-manifesto p {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        
+        .manifesto-opening {
+            text-wrap: balance;
+            max-width: 65ch;
+            color: rgba(255, 255, 255, 1) !important;
+        }
+        
+        .manifesto-opening .text-primary {
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: #B4941E !important;
+        }
+        
+        .manifesto-mission {
+            text-wrap: balance;
+            max-width: 70ch;
+            border-left: 3px solid rgba(180, 148, 30, 0.5);
+            padding-left: 1.25rem;
+            margin-left: 0;
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        
+        .manifesto-mission span {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        
+        .manifesto-mission span.font-medium {
+            color: rgba(255, 255, 255, 1) !important;
+            font-weight: 500;
+        }
+        
+        .manifesto-vision {
+            text-wrap: balance;
+            max-width: 60ch;
+            position: relative;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .vision-emphasis {
+            background: linear-gradient(90deg, #B4941E 0%, #d4b42e 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-style: normal;
+            font-weight: 600;
+        }
+        
+        /* Staggered fade-in animation for manifesto paragraphs */
+        @keyframes manifestoFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .manifesto-opening,
+        .manifesto-mission,
+        .manifesto-vision {
+            animation: manifestoFadeIn 0.6s ease-out forwards;
+        }
+        
+        .manifesto-opening { animation-delay: 0.3s; opacity: 0; }
+        .manifesto-mission { animation-delay: 0.5s; opacity: 0; }
+        .manifesto-vision { animation-delay: 0.7s; opacity: 0; }
+        
+        /* Mobile adjustments for manifesto */
+        @media screen and (max-width: 768px) {
+            .hero-manifesto {
+                text-align: center;
+            }
+            
+            .manifesto-mission {
+                border-left: none;
+                padding-left: 0;
+                margin-left: 0;
+                border-top: 1px solid rgba(180, 148, 30, 0.3);
+                padding-top: 1rem;
+            }
+            
+            .manifesto-opening,
+            .manifesto-mission,
+            .manifesto-vision {
+                max-width: 100%;
             }
         }
         
@@ -937,7 +1111,7 @@
     </div>
 
     <!-- Cinematic Hero Wrapper -->
-    <div class="relative min-h-screen w-full flex flex-col overflow-hidden">
+    <div id="heroSection" class="relative min-h-screen w-full flex flex-col overflow-hidden">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 z-0">
             <div class="absolute inset-0 bg-black/30 z-10"></div>
@@ -946,9 +1120,15 @@
         </div>
         
         <!-- Fixed Logo (shown when main logo is out of view) -->
-        <div id="fixedLogo" class="fixed-logo hidden fixed top-4 z-[100]">
-            <div class="fixed-logo-circle rounded-full backdrop-blur-sm border border-white/10 flex items-center justify-center shadow-lg">
-                <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="fixed-logo-image"/>
+        <div id="fixedLogo" class="fixed-logo hidden fixed top-4 z-[100]" onclick="scrollToTop()">
+            <div class="fixed-logo-container">
+                <span class="material-symbols-outlined fixed-logo-arrow">expand_less</span>
+                <div class="fixed-logo-wrapper">
+                    <canvas id="pixieDustCanvas"></canvas>
+                    <div class="fixed-logo-circle rounded-full backdrop-blur-sm border border-white/10 flex items-center justify-center shadow-lg">
+                        <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="fixed-logo-image"/>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1007,19 +1187,36 @@
             <span class="step-desc" id="heroStepDesc"></span>
         </div>
         
-        <!-- Bottom Content Bar -->
-        <section class="relative z-20 w-full px-10 md:px-24 pb-16">
-            <div class="flex flex-col md:flex-row items-end justify-between gap-8">
-                <div class="max-w-xl">
-                    <p class="text-white/80 text-lg leading-relaxed font-light">
-                        OMI is a creative hub dedicated to storytelling, wellness, and sustainability. Our mission is to inspire and heal through global collaboration, art, and nature. We see the world not just as it is, but as a canvas for collective healing.
-                    </p>
-                </div>
-                <div class="flex flex-col items-center md:items-end gap-6">
-                    <div class="flex items-center gap-2 text-white/40">
-                        <span class="text-xs uppercase tracking-[0.3em]">Scroll for more</span>
-                        <span class="material-symbols-outlined animate-bounce text-sm">expand_more</span>
-                    </div>
+        <!-- Bottom Content Bar - Manifesto -->
+        <section class="relative z-20 w-full px-6 md:px-24 pb-16">
+            <div class="hero-manifesto max-w-4xl">
+                <!-- Opening Statement -->
+                <p class="manifesto-opening text-white text-lg md:text-xl leading-relaxed font-medium mb-6">
+                    <span class="text-primary">OMI</span> is a global creative hub where 
+                    <span class="text-primary">Art</span>, 
+                    <span class="text-primary">Storytelling</span>, 
+                    <span class="text-primary">Wellness</span>, and 
+                    <span class="text-primary">Sustainability</span> come together, 
+                    inviting visionary creators from every corner of the world.
+                </p>
+                
+                <!-- Mission Statement -->
+                <p class="manifesto-mission text-white/80 text-base md:text-lg leading-relaxed font-light mb-6">
+                    <span class="text-white/80">Our mission at</span> <span class="text-white font-medium">OMIproductions</span> <span class="text-white/80">is to open doors for filmmakers, artists, and storytellers to produce and champion movies that transcend borders and connect audiences everywhere—breaking barriers of language, culture, and form.</span>
+                </p>
+                
+                <!-- Vision Statement -->
+                <p class="manifesto-vision text-white/90 text-base md:text-lg leading-relaxed italic">
+                    We see cinema as more than a medium—it is a 
+                    <span class="vision-emphasis">living canvas</span> for collective healing, creative freedom, and global transformation.
+                </p>
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="flex justify-end mt-8">
+                <div class="flex items-center gap-2 text-white/40">
+                    <span class="text-xs uppercase tracking-[0.3em]">Scroll for more</span>
+                    <span class="material-symbols-outlined animate-bounce text-sm">expand_more</span>
                 </div>
             </div>
         </section>
@@ -2228,6 +2425,193 @@
         }
     </script>
     
+    <!-- JavaScript for Scroll to Top -->
+    <script>
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+    
+    <!-- JavaScript for Pixie Dust Effect (2D Canvas) -->
+    <script>
+        (function() {
+            let pixieDustCanvas, pixieDustCtx;
+            let pixieDustAnimationId = null;
+            let pixieDustInitialized = false;
+            const PIXIE_PARTICLE_COUNT = 25;
+            const CIRCLE_RADIUS = 36;
+            const CANVAS_SIZE = 150;
+            const CENTER = CANVAS_SIZE / 2;
+            
+            // Gold color shades
+            const goldColors = [
+                'rgba(180, 148, 30, ',   // #B4941E
+                'rgba(212, 180, 46, ',   // #d4b42e
+                'rgba(201, 162, 39, ',   // #c9a227
+                'rgba(255, 215, 0, ',    // gold
+                'rgba(218, 165, 32, ',   // goldenrod
+                'rgba(255, 193, 37, ',   // golden yellow
+            ];
+            
+            let particles = [];
+            
+            function initPixieDust() {
+                if (pixieDustInitialized) return;
+                
+                pixieDustCanvas = document.getElementById('pixieDustCanvas');
+                if (!pixieDustCanvas) return;
+                
+                pixieDustCanvas.width = CANVAS_SIZE;
+                pixieDustCanvas.height = CANVAS_SIZE;
+                pixieDustCtx = pixieDustCanvas.getContext('2d');
+                
+                if (!pixieDustCtx) return;
+                
+                // Initialize particles
+                for (let i = 0; i < PIXIE_PARTICLE_COUNT; i++) {
+                    particles.push(createParticle(true));
+                }
+                
+                pixieDustInitialized = true;
+                animatePixieDust();
+            }
+            
+            function createParticle(randomStart = false) {
+                // Start from random position inside the circle
+                const startAngle = Math.random() * Math.PI * 2;
+                const startRadius = Math.random() * CIRCLE_RADIUS * 0.5;
+                
+                // Random outward velocity
+                const speed = 0.5 + Math.random() * 0.8;
+                const velAngle = startAngle + (Math.random() - 0.5) * 1.0;
+                
+                const maxLife = 60 + Math.random() * 40;
+                
+                return {
+                    x: CENTER + Math.cos(startAngle) * startRadius,
+                    y: CENTER + Math.sin(startAngle) * startRadius,
+                    vx: Math.cos(velAngle) * speed,
+                    vy: Math.sin(velAngle) * speed,
+                    size: Math.random() * 1.5 + 0.5, // Smaller (0.5-2) like hero animation
+                    color: goldColors[Math.floor(Math.random() * goldColors.length)],
+                    life: randomStart ? Math.random() * maxLife : 0,
+                    maxLife: maxLife
+                };
+            }
+            
+            function animatePixieDust() {
+                if (!pixieDustCtx) return;
+                
+                // Clear canvas
+                pixieDustCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                
+                // Draw all particles first
+                pixieDustCtx.globalCompositeOperation = 'source-over';
+                
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    
+                    // Update position
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life++;
+                    
+                    // Slow down
+                    p.vx *= 0.98;
+                    p.vy *= 0.98;
+                    
+                    // Calculate distance from center
+                    const dx = p.x - CENTER;
+                    const dy = p.y - CENTER;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Calculate alpha based on distance and life
+                    let alpha = 1;
+                    
+                    // Fade out as it moves far outside circle
+                    const fadeStart = CIRCLE_RADIUS * 0.9;
+                    const fadeEnd = CIRCLE_RADIUS * 1.6;
+                    if (dist > fadeStart) {
+                        const fadeProgress = (dist - fadeStart) / (fadeEnd - fadeStart);
+                        alpha = 1 - Math.min(1, fadeProgress);
+                    }
+                    
+                    // Also fade based on lifetime
+                    const lifeRatio = p.life / p.maxLife;
+                    alpha *= 1 - lifeRatio;
+                    
+                    // Draw particle with glow (small particles like hero animation)
+                    if (alpha > 0.01) {
+                        const currentSize = p.size * (0.8 + alpha * 0.4);
+                        
+                        // Outer glow
+                        pixieDustCtx.beginPath();
+                        pixieDustCtx.arc(p.x, p.y, currentSize * 2.5, 0, Math.PI * 2);
+                        pixieDustCtx.fillStyle = p.color + (alpha * 0.3) + ')';
+                        pixieDustCtx.fill();
+                        
+                        // Inner bright core
+                        pixieDustCtx.beginPath();
+                        pixieDustCtx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
+                        pixieDustCtx.fillStyle = p.color + alpha + ')';
+                        pixieDustCtx.fill();
+                    }
+                    
+                    // Reset particle if faded out or exceeded lifetime
+                    if (alpha <= 0.01 || p.life >= p.maxLife || dist > fadeEnd) {
+                        particles[i] = createParticle(false);
+                    }
+                }
+                
+                // Cut out the center circle so logo shows through
+                pixieDustCtx.globalCompositeOperation = 'destination-out';
+                pixieDustCtx.beginPath();
+                pixieDustCtx.arc(CENTER, CENTER, CIRCLE_RADIUS, 0, Math.PI * 2);
+                pixieDustCtx.fill();
+                
+                // Reset composite operation
+                pixieDustCtx.globalCompositeOperation = 'source-over';
+                
+                pixieDustAnimationId = requestAnimationFrame(animatePixieDust);
+            }
+            
+            function stopPixieDust() {
+                if (pixieDustAnimationId) {
+                    cancelAnimationFrame(pixieDustAnimationId);
+                    pixieDustAnimationId = null;
+                }
+            }
+            
+            // Initialize when fixed logo becomes visible
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const fixedLogo = document.getElementById('fixedLogo');
+                        if (fixedLogo && !fixedLogo.classList.contains('hidden')) {
+                            if (!pixieDustInitialized) {
+                                initPixieDust();
+                            } else if (!pixieDustAnimationId) {
+                                animatePixieDust();
+                            }
+                        } else {
+                            stopPixieDust();
+                        }
+                    }
+                });
+            });
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                const fixedLogo = document.getElementById('fixedLogo');
+                if (fixedLogo) {
+                    observer.observe(fixedLogo, { attributes: true });
+                }
+            });
+        })();
+    </script>
+    
     <!-- JavaScript for Contact Panel -->
     <script>
         function openContactPanel() {
@@ -2395,32 +2779,32 @@
             window.addEventListener('resize', handleResize);
         });
         
-        // Fixed logo visibility based on main logo scroll position
+        // Fixed logo visibility based on hero section scroll position
         document.addEventListener('DOMContentLoaded', () => {
-            const mainLogo = document.querySelector('.hero-main-logo');
+            const heroSection = document.getElementById('heroSection');
             const fixedLogo = document.getElementById('fixedLogo');
             
-            if (!mainLogo || !fixedLogo) return;
+            if (!heroSection || !fixedLogo) return;
             
-            // Create Intersection Observer to watch main logo
+            // Create Intersection Observer to watch hero section
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Main logo is visible - hide fixed logo
+                        // Hero section is still visible - hide fixed logo
                         fixedLogo.classList.add('hidden');
                     } else {
-                        // Main logo is out of view - show fixed logo
+                        // Hero section is completely out of view - show fixed logo
                         fixedLogo.classList.remove('hidden');
                     }
                 });
             }, {
-                // Trigger when logo is completely out of view
+                // Trigger only when hero section is completely out of view
                 threshold: 0,
                 rootMargin: '0px'
             });
             
-            // Start observing the main logo
-            observer.observe(mainLogo);
+            // Start observing the hero section
+            observer.observe(heroSection);
         });
     </script>
 </body>
