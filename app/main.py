@@ -28,6 +28,7 @@ else:
         print(f"✓ Loaded environment from {fallback_env}")
 
 from app.database import db
+from app.email_service import get_email_service, generate_submission_confirmation_email
 
 
 class ProjectSubmission(BaseModel):
@@ -228,11 +229,57 @@ async def submit_project(submission: ProjectSubmission):
         # Log error but don't fail - database might not be connected
         print(f"Database save failed: {e}")
     
+    # Send confirmation email asynchronously
+    email_sent = False
+    email_id = None
+    
+    if submission.contact_email:
+        try:
+            # Initialize email service with database connection
+            email_svc = get_email_service(db)
+            
+            # Prepare submission data for email template
+            submission_data = {
+                "contact_name": submission.contact_name,
+                "contact_email": submission.contact_email,
+                "title": submission.title,
+                "logline": submission.logline,
+                "synopsis": submission.synopsis,
+                "budget": submission.budget,
+                "languages": submission.languages,
+                "actor_1": submission.actor_1,
+                "actor_2": submission.actor_2,
+                "actor_3": submission.actor_3,
+                "actor_4": submission.actor_4,
+                "actor_5": submission.actor_5,
+                "actor_6": submission.actor_6,
+            }
+            
+            # Generate email content
+            subject, html_body, plain_body = generate_submission_confirmation_email(submission_data)
+            
+            # Send email asynchronously (non-blocking)
+            email_svc.send_email_async(
+                to_email=submission.contact_email,
+                to_name=submission.contact_name or "Valued Creator",
+                subject=subject,
+                body_html=html_body,
+                body_plain=plain_body,
+                submission_id=submission_id,
+                email_type="submission_confirmation",
+            )
+            email_sent = True
+            print(f"✓ Confirmation email queued for {submission.contact_email}")
+            
+        except Exception as e:
+            print(f"✗ Failed to send confirmation email: {e}")
+    
     return {
         "success": True,
         "message": "Project submitted successfully",
         "submission_id": submission_id,
         "db_saved": db_saved,
+        "email_queued": email_sent,
         "data": {
             "title": submission.title,
             "logline": submission.logline,
@@ -377,3 +424,113 @@ async def delete_submission(submission_id: str):
     except Exception as e:
         print(f"Failed to delete submission: {e}")
         return {"success": False, "error": str(e)}
+
+
+# ============================================================================
+# Email Tracking Endpoints
+# ============================================================================
+
+@app.get("/api/v1/emails")
+async def get_emails(limit: int = 50, offset: int = 0):
+    """Get all sent emails with pagination (for admin purposes)."""
+    try:
+        emails = db.fetch_all(
+            """
+            SELECT 
+                e.id,
+                e.submission_id,
+                e.from_email,
+                e.from_name,
+                e.to_email,
+                e.to_name,
+                e.subject,
+                e.email_type,
+                e.status,
+                e.sent_at,
+                e.failed_at,
+                e.error_message,
+                e.retry_count,
+                e.created_at,
+                p.title as project_title,
+                p.contact_name
+            FROM emails_sent e
+            LEFT JOIN project_submissions p ON e.submission_id = p.id
+            ORDER BY e.created_at DESC
+            LIMIT %s OFFSET %s
+            """,
+            (limit, offset)
+        )
+        
+        # Get total count
+        count_result = db.fetch_one("SELECT COUNT(*) as total FROM emails_sent")
+        total = count_result["total"] if count_result else 0
+        
+        return {
+            "success": True,
+            "emails": emails,
+            "pagination": {
+                "total": total,
+                "limit": limit,
+                "offset": offset,
+            }
+        }
+    except Exception as e:
+        print(f"Failed to fetch emails: {e}")
+        return {"success": False, "error": str(e), "emails": []}
+
+
+@app.get("/api/v1/emails/{email_id}")
+async def get_email(email_id: str):
+    """Get a specific email by ID with full content."""
+    try:
+        email = db.fetch_one(
+            """
+            SELECT 
+                e.*,
+                p.title as project_title,
+                p.contact_name,
+                p.contact_email as submission_email
+            FROM emails_sent e
+            LEFT JOIN project_submissions p ON e.submission_id = p.id
+            WHERE e.id = %s
+            """,
+            (email_id,)
+        )
+        if email:
+            return {"success": True, "email": email}
+        return {"success": False, "error": "Email not found"}
+    except Exception as e:
+        print(f"Failed to fetch email: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/v1/submissions/{submission_id}/emails")
+async def get_submission_emails(submission_id: str):
+    """Get all emails sent for a specific submission."""
+    try:
+        emails = db.fetch_all(
+            """
+            SELECT 
+                id,
+                from_email,
+                from_name,
+                to_email,
+                to_name,
+                subject,
+                email_type,
+                status,
+                sent_at,
+                failed_at,
+                error_message,
+                retry_count,
+                created_at
+            FROM emails_sent
+            WHERE submission_id = %s
+            ORDER BY created_at DESC
+            """,
+            (submission_id,)
+        )
+        return {"success": True, "emails": emails}
+    except Exception as e:
+        print(f"Failed to fetch submission emails: {e}")
+        return {"success": False, "error": str(e), "emails": []}
