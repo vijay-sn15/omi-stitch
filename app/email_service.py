@@ -28,7 +28,7 @@ from jinja2 import Template
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "vijay@omiproductions.com")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "REDACTED_APP_PASSWORD")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 SENDER_NAME = os.getenv("SENDER_NAME", "OMI Global Productions")
 
 
