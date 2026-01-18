@@ -313,6 +313,9 @@ def generate_submission_confirmation_email(submission_data: dict) -> tuple[str, 
             actors.append(actor)
     actors_str = ", ".join(actors) if actors else None
     
+    # Tracking URL
+    tracking_url = submission_data.get("tracking_url", "")
+    
     # Subject line - clean and professional
     if title:
         subject = f"We've Received Your Project: {title}"
@@ -526,6 +529,26 @@ def generate_submission_confirmation_email(submission_data: dict) -> tuple[str, 
                         </td>
                     </tr>
                     
+                    {% if tracking_url %}
+                    <!-- Track Your Submission Button -->
+                    <tr>
+                        <td style="padding: 0 40px 30px; text-align: center;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                <tr>
+                                    <td style="background: linear-gradient(135deg, #B4941E 0%, #d4b42e 100%); border-radius: 8px;">
+                                        <a href="{{ tracking_url }}" style="display: inline-block; padding: 16px 32px; color: #112116; text-decoration: none; font-weight: 700; font-size: 16px;">
+                                            Track Your Submission &rarr;
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin: 12px 0 0; color: #718096; font-size: 12px;">
+                                View status updates, send messages, and track your project's progress
+                            </p>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    
                     <!-- CTA Note -->
                     <tr>
                         <td style="padding: 0 40px 30px;">
@@ -595,6 +618,13 @@ WHAT HAPPENS NEXT?
 2. We evaluate alignment with our creative vision
 3. You'll hear from us within 5-7 business days
 
+{% if tracking_url %}
+TRACK YOUR SUBMISSION
+---------------------
+View status updates, send messages, and track your project's progress:
+{{ tracking_url }}
+
+{% endif %}
 Have questions? Simply reply to this email and our team will be happy to assist you.
 
 ---
@@ -614,6 +644,7 @@ This is a transactional email regarding your project submission."""
         "languages": languages,
         "actors_str": actors_str,
         "current_year": current_year,
+        "tracking_url": tracking_url,
     }
 
     html_body = Template(html_template).render(**template_data)

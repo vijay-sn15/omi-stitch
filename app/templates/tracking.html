@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Track Your Submission - OMI Global Productions</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon-circle.svg"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
+    <link href="/static/css/output.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: linear-gradient(135deg, #0f1610 0%, #1a2f20 50%, #112116 100%);
+            min-height: 100vh;
+        }
+        
+        .gold-accent { color: #B4941E; }
+        .gold-bg { background-color: #B4941E; }
+        .gold-border { border-color: #B4941E; }
+        
+        /* Status Progress Styles */
+        .status-step {
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .status-step::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: -50%;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 0;
+        }
+        
+        .status-step:first-child::before {
+            display: none;
+        }
+        
+        .status-step.completed::before {
+            background: linear-gradient(90deg, #B4941E, #B4941E);
+        }
+        
+        .status-step.active::before {
+            background: linear-gradient(90deg, #B4941E, rgba(180, 148, 30, 0.3));
+        }
+        
+        .status-node {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            background: #1a2a1f;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .status-step.completed .status-node {
+            background: #B4941E;
+            border-color: #B4941E;
+            color: #112116;
+            box-shadow: 0 0 20px rgba(180, 148, 30, 0.4);
+        }
+        
+        .status-step.active .status-node {
+            background: linear-gradient(135deg, #B4941E 0%, #d4b42e 100%);
+            border-color: #B4941E;
+            color: #112116;
+            box-shadow: 0 0 30px rgba(180, 148, 30, 0.6);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(180, 148, 30, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(180, 148, 30, 0.8); }
+        }
+        
+        .status-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-step.completed .status-label,
+        .status-step.active .status-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Glass card styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+        
+        /* Comment styles */
+        .comment-bubble {
+            border-radius: 16px;
+            padding: 16px 20px;
+        }
+        
+        .comment-user {
+            background: rgba(180, 148, 30, 0.1);
+            border: 1px solid rgba(180, 148, 30, 0.2);
+            margin-left: auto;
+        }
+        
+        .comment-admin {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-right: auto;
+        }
+        
+        /* Form styles */
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #B4941E;
+            box-shadow: 0 0 0 3px rgba(180, 148, 30, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Detail row */
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            width: 140px;
+            flex-shrink: 0;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            color: rgba(255, 255, 255, 0.9);
+            flex: 1;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            background: #B4941E;
+            color: #112116;
+            font-weight: 600;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(180, 148, 30, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(180, 148, 30, 0.5);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#112116]/80 backdrop-blur-lg border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <img src="/static/images/omi-logo-transparent-graphic.png" alt="OMI" class="h-10">
+                <span class="text-xl font-bold gold-accent">OMI</span>
+            </a>
+            <div class="text-sm text-white/60">
+                <span class="hidden sm:inline">Project Tracking Portal</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-20">
+                <div class="inline-block w-12 h-12 border-4 border-white/10 border-t-[#B4941E] rounded-full animate-spin"></div>
+                <p class="mt-4 text-white/60">Loading your submission...</p>
+            </div>
+            
+            <!-- Error State -->
+            <div id="error-state" class="hidden text-center py-20">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-4xl text-red-400">error</span>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Submission Not Found</h2>
+                <p class="text-white/60 mb-6">The tracking link may be invalid or expired.</p>
+                <a href="/" class="inline-flex items-center gap-2 px-6 py-3 gold-bg text-[#112116] font-semibold rounded-lg hover:opacity-90 transition-opacity">
+                    <span class="material-symbols-outlined">home</span>
+                    Return Home
+                </a>
+            </div>
+            
+            <!-- Content (hidden until loaded) -->
+            <div id="content" class="hidden">
+                
+                <!-- Status Header -->
+                <div class="glass-card p-6 sm:p-8 mb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <p class="text-white/50 text-sm mb-1">Project Submission</p>
+                            <h1 id="project-title" class="text-2xl sm:text-3xl font-bold">Loading...</h1>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="status-badge" class="px-4 py-2 rounded-full text-sm font-semibold bg-yellow-500/20 text-yellow-400">
+                                Pending Review
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Progress Bar -->
+                    <div class="flex items-start justify-between gap-2 overflow-x-auto pb-4">
+                        <div class="status-step" data-step="1">
+                            <div class="status-node">
+                                <span class="material-symbols-outlined text-lg">edit_note</span>
+                            </div>
+                            <p class="status-label">Submitted</p>
+                        </div>
+                        <div class="status-step" data-step="2">
+                            <div class="status-node">
+                                <span class="material-symbols-outlined text-lg">visibility</span>
+                            </div>
+                            <p class="status-label">Under Review</p>
+                        </div>
+                        <div class="status-step" data-step="3">
+                            <div class="status-node">
+                                <span class="material-symbols-outlined text-lg">call</span>
+                            </div>
+                            <p class="status-label">Callback</p>
+                        </div>
+                        <div class="status-step" data-step="4">
+                            <div class="status-node">
+                                <span class="material-symbols-outlined text-lg">groups</span>
+                            </div>
+                            <p class="status-label">Meeting</p>
+                        </div>
+                        <div class="status-step" data-step="5">
+                            <div class="status-node">
+                                <span class="material-symbols-outlined text-lg">handshake</span>
+                            </div>
+                            <p class="status-label">Agreement</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Two Column Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left Column - Submission Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- Project Details -->
+                        <div class="glass-card p-6">
+                            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined gold-accent">movie</span>
+                                Project Details
+                            </h2>
+                            <div id="project-details">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Comments Section -->
+                        <div class="glass-card p-6">
+                            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined gold-accent">chat</span>
+                                Messages
+                            </h2>
+                            
+                            <!-- Comments List -->
+                            <div id="comments-list" class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                                <p class="text-white/40 text-center py-8">No messages yet</p>
+                            </div>
+                            
+                            <!-- Add Comment Form -->
+                            <form id="comment-form" class="space-y-4">
+                                <textarea 
+                                    id="comment-input" 
+                                    class="form-input resize-none" 
+                                    rows="3" 
+                                    placeholder="Write a message..."
+                                    required
+                                ></textarea>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="flex items-center gap-2 px-6 py-3 gold-bg text-[#112116] font-semibold rounded-lg hover:opacity-90 transition-all">
+                                        <span class="material-symbols-outlined">send</span>
+                                        Send Message
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Contact Info & Quick Stats -->
+                    <div class="space-y-6">
+                        
+                        <!-- Contact Info -->
+                        <div class="glass-card p-6">
+                            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined gold-accent">person</span>
+                                Contact Info
+                            </h2>
+                            <div id="contact-info">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Submission Info -->
+                        <div class="glass-card p-6">
+                            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined gold-accent">info</span>
+                                Submission Info
+                            </h2>
+                            <div id="submission-info">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Need Help -->
+                        <div class="glass-card p-6 border-[#B4941E]/30">
+                            <h2 class="text-lg font-semibold mb-2 flex items-center gap-2">
+                                <span class="material-symbols-outlined gold-accent">help</span>
+                                Need Help?
+                            </h2>
+                            <p class="text-white/60 text-sm mb-4">
+                                Have questions about your submission? Send us a message above or contact us directly.
+                            </p>
+                            <a href="mailto:vijay@omiproductions.com" class="text-[#B4941E] hover:underline text-sm flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">mail</span>
+                                vijay@omiproductions.com
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-6">
+        <div class="max-w-7xl mx-auto px-6 text-center text-white/40 text-sm">
+            © 2026 OMI Global Productions. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Get tracking token from URL
+        const pathParts = window.location.pathname.split('/');
+        const trackingToken = pathParts[pathParts.length - 1];
+        
+        // DOM Elements
+        const loadingState = document.getElementById('loading-state');
+        const errorState = document.getElementById('error-state');
+        const content = document.getElementById('content');
+        const toast = document.getElementById('toast');
+        
+        // Submission data storage
+        let submissionData = null;
+        
+        // Status mapping
+        const statusMap = {
+            'pending': { step: 1, label: 'Pending Review', class: 'bg-yellow-500/20 text-yellow-400' },
+            'reviewed': { step: 2, label: 'Under Review', class: 'bg-blue-500/20 text-blue-400' },
+            'callback': { step: 3, label: 'Callback Scheduled', class: 'bg-purple-500/20 text-purple-400' },
+            'meeting': { step: 4, label: 'Meeting Stage', class: 'bg-indigo-500/20 text-indigo-400' },
+            'approved': { step: 5, label: 'Approved', class: 'bg-green-500/20 text-green-400' },
+            'rejected': { step: 0, label: 'Not Selected', class: 'bg-red-500/20 text-red-400' }
+        };
+        
+        // Show toast notification
+        function showToast(message, duration = 3000) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            if (!amount) return 'Not specified';
+            return new Intl.NumberFormat('en-US', { 
+                style: 'currency', 
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        // Update status progress
+        function updateStatusProgress(status) {
+            const statusInfo = statusMap[status] || statusMap['pending'];
+            const currentStep = statusInfo.step;
+            
+            // Update badge
+            const badge = document.getElementById('status-badge');
+            badge.textContent = statusInfo.label;
+            badge.className = `px-4 py-2 rounded-full text-sm font-semibold ${statusInfo.class}`;
+            
+            // Update progress steps
+            document.querySelectorAll('.status-step').forEach(stepEl => {
+                const step = parseInt(stepEl.dataset.step);
+                stepEl.classList.remove('completed', 'active');
+                
+                if (step < currentStep) {
+                    stepEl.classList.add('completed');
+                } else if (step === currentStep) {
+                    stepEl.classList.add('active');
+                }
+            });
+        }
+        
+        // Render project details
+        function renderProjectDetails(data) {
+            const details = [];
+            
+            if (data.logline) {
+                details.push({ label: 'Logline', value: `"${data.logline}"` });
+            }
+            if (data.synopsis) {
+                details.push({ label: 'Synopsis', value: data.synopsis });
+            }
+            if (data.budget) {
+                details.push({ label: 'Budget', value: formatCurrency(data.budget) });
+            }
+            if (data.languages) {
+                details.push({ label: 'Languages', value: data.languages });
+            }
+            
+            // Actors
+            const actors = [data.actor_1, data.actor_2, data.actor_3, data.actor_4, data.actor_5, data.actor_6].filter(Boolean);
+            if (actors.length > 0) {
+                details.push({ label: 'Cast Ideas', value: actors.join(', ') });
+            }
+            
+            if (data.treatment_url) {
+                details.push({ label: 'Treatment', value: `<a href="${data.treatment_url}" target="_blank" class="text-[#B4941E] hover:underline">View Document</a>` });
+            }
+            if (data.moodboard_url) {
+                details.push({ label: 'Moodboard', value: `<a href="${data.moodboard_url}" target="_blank" class="text-[#B4941E] hover:underline">View Moodboard</a>` });
+            }
+            
+            const container = document.getElementById('project-details');
+            if (details.length === 0) {
+                container.innerHTML = '<p class="text-white/40">No additional details provided</p>';
+            } else {
+                container.innerHTML = details.map(d => `
+                    <div class="detail-row">
+                        <span class="detail-label">${d.label}</span>
+                        <span class="detail-value">${d.value}</span>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Render contact info
+        function renderContactInfo(data) {
+            const container = document.getElementById('contact-info');
+            container.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-white/40">person</span>
+                        <span>${data.contact_name || 'N/A'}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-white/40">mail</span>
+                        <span>${data.contact_email || 'N/A'}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-white/40">phone</span>
+                        <span>+91 ${data.contact_phone || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Render submission info
+        function renderSubmissionInfo(data) {
+            const container = document.getElementById('submission-info');
+            container.innerHTML = `
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-white/50">Submitted</span>
+                        <span>${formatDate(data.created_at)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/50">Last Updated</span>
+                        <span>${formatDate(data.updated_at)}</span>
+                    </div>
+                    ${data.reviewed_at ? `
+                    <div class="flex justify-between">
+                        <span class="text-white/50">Reviewed</span>
+                        <span>${formatDate(data.reviewed_at)}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        // Render comments
+        function renderComments(comments) {
+            const container = document.getElementById('comments-list');
+            
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<p class="text-white/40 text-center py-8">No messages yet. Start the conversation!</p>';
+                return;
+            }
+            
+            container.innerHTML = comments.map(comment => `
+                <div class="comment-bubble ${comment.author_type === 'user' ? 'comment-user ml-8' : 'comment-admin mr-8'}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-sm ${comment.author_type === 'admin' ? 'gold-accent' : ''}">${comment.author_name}</span>
+                        <span class="text-xs text-white/40">${formatDate(comment.created_at)}</span>
+                    </div>
+                    <p class="text-white/80 text-sm leading-relaxed">${comment.message}</p>
+                </div>
+            `).join('');
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Fetch submission data
+        async function fetchSubmission() {
+            try {
+                const response = await fetch(`/api/v1/track/${trackingToken}`);
+                const result = await response.json();
+                
+                if (!result.success || !result.submission) {
+                    throw new Error('Submission not found');
+                }
+                
+                submissionData = result.submission;
+                
+                // Update UI
+                document.getElementById('project-title').textContent = submissionData.title || 'Untitled Project';
+                updateStatusProgress(submissionData.status);
+                renderProjectDetails(submissionData);
+                renderContactInfo(submissionData);
+                renderSubmissionInfo(submissionData);
+                renderComments(result.comments || []);
+                
+                // Show content
+                loadingState.classList.add('hidden');
+                content.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error fetching submission:', error);
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
+        }
+        
+        // Submit comment
+        document.getElementById('comment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const messageInput = document.getElementById('comment-input');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            try {
+                const response = await fetch(`/api/v1/track/${trackingToken}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    messageInput.value = '';
+                    showToast('Message sent successfully!');
+                    // Refresh comments
+                    fetchSubmission();
+                } else {
+                    showToast('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error submitting comment:', error);
+                showToast('Failed to send message');
+            }
+        });
+        
+        // Initialize
+        if (trackingToken && trackingToken !== 'track') {
+            fetchSubmission();
+        } else {
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -122,6 +122,15 @@ async def health_check():
     }
 
 
+@app.get("/track/{tracking_token}", response_class=HTMLResponse)
+async def tracking_page(request: Request, tracking_token: str):
+    """Serve the project tracking page."""
+    return templates.TemplateResponse(
+        request=request,
+        name="tracking.html",
+    )
+
+
 @app.get("/api/v1/pillars")
 async def get_pillars():
     """API endpoint returning the three pillars of OMI."""
@@ -165,6 +174,7 @@ async def submit_project(submission: ProjectSubmission):
     
     # Try to save to database if connected
     submission_id = None
+    tracking_token = None
     db_saved = False
     
     try:
@@ -196,7 +206,7 @@ async def submit_project(submission: ProjectSubmission):
             ) VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
-            RETURNING id
+            RETURNING id, tracking_token
             """,
             (
                 submission.contact_name,
@@ -224,6 +234,7 @@ async def submit_project(submission: ProjectSubmission):
         )
         if result:
             submission_id = str(result["id"])
+            tracking_token = str(result["tracking_token"]) if result.get("tracking_token") else None
             db_saved = True
     except Exception as e:
         # Log error but don't fail - database might not be connected
@@ -237,6 +248,13 @@ async def submit_project(submission: ProjectSubmission):
         try:
             # Initialize email service with database connection
             email_svc = get_email_service(db)
+            
+            # Build tracking URL
+            tracking_url = None
+            if tracking_token:
+                # Use production URL or localhost based on environment
+                base_url = os.getenv("BASE_URL", "https://www.omiproductions.com")
+                tracking_url = f"{base_url}/track/{tracking_token}"
             
             # Prepare submission data for email template
             submission_data = {
@@ -253,6 +271,7 @@ async def submit_project(submission: ProjectSubmission):
                 "actor_4": submission.actor_4,
                 "actor_5": submission.actor_5,
                 "actor_6": submission.actor_6,
+                "tracking_url": tracking_url,
             }
             
             # Generate email content
@@ -534,3 +553,196 @@ async def get_submission_emails(submission_id: str):
     except Exception as e:
         print(f"Failed to fetch submission emails: {e}")
         return {"success": False, "error": str(e), "emails": []}
+
+
+# ============================================================================
+# Project Tracking Endpoints (Public)
+# ============================================================================
+
+class CommentSubmission(BaseModel):
+    """Comment submission data."""
+    message: str
+
+
+@app.get("/api/v1/track/{tracking_token}")
+async def get_submission_by_token(tracking_token: str):
+    """Get a project submission by its tracking token (public endpoint)."""
+    try:
+        submission = db.fetch_one(
+            """
+            SELECT 
+                id,
+                contact_name,
+                contact_email,
+                contact_phone,
+                title,
+                logline,
+                synopsis,
+                treatment_url,
+                moodboard_url,
+                soundtracks,
+                writer_bio,
+                actor_1,
+                actor_2,
+                actor_3,
+                actor_4,
+                actor_5,
+                actor_6,
+                budget,
+                languages,
+                previous_works,
+                status,
+                created_at,
+                updated_at,
+                reviewed_at
+            FROM project_submissions
+            WHERE tracking_token = %s
+            """,
+            (tracking_token,)
+        )
+        
+        if not submission:
+            return {"success": False, "error": "Submission not found"}
+        
+        # Get comments (excluding internal admin notes)
+        comments = db.fetch_all(
+            """
+            SELECT 
+                id,
+                author_type,
+                author_name,
+                message,
+                created_at
+            FROM submission_comments
+            WHERE submission_id = %s AND is_internal = false
+            ORDER BY created_at ASC
+            """,
+            (submission["id"],)
+        )
+        
+        return {
+            "success": True, 
+            "submission": submission,
+            "comments": comments or []
+        }
+    except Exception as e:
+        print(f"Failed to fetch submission by token: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/v1/track/{tracking_token}/comments")
+async def add_comment(tracking_token: str, comment: CommentSubmission):
+    """Add a comment to a submission (from the user)."""
+    try:
+        # Get submission to verify token and get details
+        submission = db.fetch_one(
+            """
+            SELECT id, contact_name, contact_email
+            FROM project_submissions
+            WHERE tracking_token = %s
+            """,
+            (tracking_token,)
+        )
+        
+        if not submission:
+            return {"success": False, "error": "Submission not found"}
+        
+        # Insert the comment
+        result = db.fetch_one(
+            """
+            INSERT INTO submission_comments (
+                submission_id,
+                author_type,
+                author_name,
+                author_email,
+                message,
+                is_internal,
+                created_at
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s
+            )
+            RETURNING id
+            """,
+            (
+                submission["id"],
+                "user",
+                submission["contact_name"],
+                submission["contact_email"],
+                comment.message,
+                False,
+                datetime.utcnow(),
+            )
+        )
+        
+        if result:
+            return {"success": True, "comment_id": str(result["id"])}
+        return {"success": False, "error": "Failed to save comment"}
+        
+    except Exception as e:
+        print(f"Failed to add comment: {e}")
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/v1/submissions/{submission_id}/comments")
+async def get_submission_comments(submission_id: str, include_internal: bool = False):
+    """Get all comments for a submission (admin endpoint)."""
+    try:
+        query = """
+            SELECT 
+                id,
+                author_type,
+                author_name,
+                author_email,
+                message,
+                is_internal,
+                is_read,
+                created_at
+            FROM submission_comments
+            WHERE submission_id = %s
+        """
+        if not include_internal:
+            query += " AND is_internal = false"
+        query += " ORDER BY created_at ASC"
+        
+        comments = db.fetch_all(query, (submission_id,))
+        return {"success": True, "comments": comments or []}
+    except Exception as e:
+        print(f"Failed to fetch comments: {e}")
+        return {"success": False, "error": str(e), "comments": []}
+
+
+@app.post("/api/v1/submissions/{submission_id}/comments")
+async def add_admin_comment(submission_id: str, comment: CommentSubmission, author_name: str = "OMI Team", is_internal: bool = False):
+    """Add a comment to a submission (from admin)."""
+    try:
+        result = db.fetch_one(
+            """
+            INSERT INTO submission_comments (
+                submission_id,
+                author_type,
+                author_name,
+                message,
+                is_internal,
+                created_at
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s
+            )
+            RETURNING id
+            """,
+            (
+                submission_id,
+                "admin",
+                author_name,
+                comment.message,
+                is_internal,
+                datetime.utcnow(),
+            )
+        )
+        
+        if result:
+            return {"success": True, "comment_id": str(result["id"])}
+        return {"success": False, "error": "Failed to save comment"}
+        
+    except Exception as e:
+        print(f"Failed to add admin comment: {e}")
+        return {"success": False, "error": str(e)}
