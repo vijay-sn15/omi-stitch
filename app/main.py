@@ -29,6 +29,7 @@ else:
 
 from app.database import db
 from app.email_service import get_email_service, generate_submission_confirmation_email
+from app.portal.router import router as portal_router
 
 
 class ProjectSubmission(BaseModel):
@@ -93,6 +94,8 @@ app = FastAPI(
 # Mount static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# Include portal router
+app.include_router(portal_router)
 
 # Setup Jinja2 templates
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
